@@ -1,0 +1,2 @@
+class CDNError(Exception):
+    pass

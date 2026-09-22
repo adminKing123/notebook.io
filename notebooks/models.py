@@ -1,0 +1,39 @@
+import uuid
+
+from django.conf import settings
+from django.db import models
+
+
+class NotebookAccess(models.TextChoices):
+    PUBLIC = 'public', 'Public'
+    PRIVATE = 'private', 'Private'
+    SHARED = 'shared', 'Shared'
+
+
+class Notebook(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notebooks',
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    access = models.CharField(
+        max_length=20,
+        choices=NotebookAccess.choices,
+        default=NotebookAccess.PRIVATE,
+    )
+    thumbnail_url = models.URLField(blank=True)
+    page_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+        indexes = [
+            models.Index(fields=['owner', '-updated_at']),
+        ]
+
+    def __str__(self):
+        return self.title
