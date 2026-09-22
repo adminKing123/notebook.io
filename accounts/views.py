@@ -29,6 +29,11 @@ from accounts.services.otp_service import (
 
 User = get_user_model()
 
+INVALID_OTP_RESPONSE = Response(
+    {'detail': 'Invalid or expired verification code.'},
+    status=status.HTTP_400_BAD_REQUEST,
+)
+
 
 def build_auth_response(*, user):
     refresh = RefreshToken.for_user(user)
@@ -37,6 +42,36 @@ def build_auth_response(*, user):
         'refresh': str(refresh),
         'user': UserProfileSerializer(user).data,
     }
+
+
+def get_pending_signup_user(email):
+    user = User.objects.filter(email__iexact=email).first()
+
+    if user is None:
+        return None, Response(
+            {'detail': 'No pending sign-up found for this email.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if user.is_active:
+        return None, Response(
+            {'detail': 'This account is already verified.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    return user, None
+
+
+def send_signup_otp(email):
+    otp_code = create_signup_otp(email)
+    send_signup_otp_email(email=email, code=otp_code)
+    return otp_code
+
+
+def send_password_reset_otp(email):
+    otp_code = create_password_reset_otp(email)
+    send_password_reset_otp_email(email=email, code=otp_code)
+    return otp_code
 
 
 class SignUpView(APIView):
@@ -66,8 +101,7 @@ class SignUpView(APIView):
             user.is_active = False
             user.save(update_fields=['full_name', 'age', 'password', 'is_active'])
 
-        otp_code = create_signup_otp(user.email)
-        send_signup_otp_email(email=user.email, code=otp_code)
+        send_signup_otp(user.email)
 
         return Response(
             {
@@ -87,24 +121,12 @@ class VerifySignUpView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        user = User.objects.filter(email__iexact=data['email']).first()
-        if user is None:
-            return Response(
-                {'detail': 'No pending sign-up found for this email.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if user.is_active:
-            return Response(
-                {'detail': 'This account is already verified.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        user, error_response = get_pending_signup_user(data['email'])
+        if error_response is not None:
+            return error_response
 
         if not verify_signup_otp(email=data['email'], code=data['otp']):
-            return Response(
-                {'detail': 'Invalid or expired verification code.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return INVALID_OTP_RESPONSE
 
         user.is_active = True
         user.save(update_fields=['is_active'])
@@ -127,21 +149,11 @@ class ResendSignUpOtpView(APIView):
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email'].lower()
 
-        user = User.objects.filter(email__iexact=email).first()
-        if user is None:
-            return Response(
-                {'detail': 'No pending sign-up found for this email.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        user, error_response = get_pending_signup_user(email)
+        if error_response is not None:
+            return error_response
 
-        if user.is_active:
-            return Response(
-                {'detail': 'This account is already verified.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        otp_code = create_signup_otp(user.email)
-        send_signup_otp_email(email=user.email, code=otp_code)
+        send_signup_otp(user.email)
 
         return Response(
             {'message': 'A new verification code has been sent to your email.'},
@@ -179,8 +191,7 @@ class ForgotPasswordRequestView(APIView):
 
         user = User.objects.filter(email__iexact=email, is_active=True).first()
         if user is not None:
-            otp_code = create_password_reset_otp(user.email)
-            send_password_reset_otp_email(email=user.email, code=otp_code)
+            send_password_reset_otp(user.email)
 
         return Response(
             {
@@ -205,20 +216,14 @@ class VerifyForgotPasswordOtpView(APIView):
 
         user = User.objects.filter(email__iexact=data['email'], is_active=True).first()
         if user is None:
-            return Response(
-                {'detail': 'Invalid or expired verification code.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return INVALID_OTP_RESPONSE
 
         if not verify_password_reset_otp(
             email=data['email'],
             code=data['otp'],
             consume=False,
         ):
-            return Response(
-                {'detail': 'Invalid or expired verification code.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return INVALID_OTP_RESPONSE
 
         return Response(
             {'message': 'Verification code confirmed. You can set a new password.'},
@@ -242,8 +247,7 @@ class ResendForgotPasswordOtpView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        otp_code = create_password_reset_otp(user.email)
-        send_password_reset_otp_email(email=user.email, code=otp_code)
+        send_password_reset_otp(user.email)
 
         return Response(
             {'message': 'A new verification code has been sent to your email.'},
@@ -262,20 +266,14 @@ class ResetPasswordView(APIView):
 
         user = User.objects.filter(email__iexact=data['email'], is_active=True).first()
         if user is None:
-            return Response(
-                {'detail': 'Invalid or expired verification code.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return INVALID_OTP_RESPONSE
 
         if not verify_password_reset_otp(
             email=data['email'],
             code=data['otp'],
             consume=True,
         ):
-            return Response(
-                {'detail': 'Invalid or expired verification code.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return INVALID_OTP_RESPONSE
 
         user.set_password(data['password'])
         user.save(update_fields=['password'])

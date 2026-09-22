@@ -4,6 +4,20 @@ from rest_framework import serializers
 User = get_user_model()
 
 
+def validate_otp_digits(value):
+    if not value.isdigit():
+        raise serializers.ValidationError('Verification code must be 6 digits.')
+    return value
+
+
+def validate_passwords_match(attrs):
+    if attrs['password'] != attrs['confirm_password']:
+        raise serializers.ValidationError(
+            {'confirm_password': 'Passwords do not match.'}
+        )
+    return attrs
+
+
 class SignUpSerializer(serializers.Serializer):
     full_name = serializers.CharField(max_length=255)
     age = serializers.IntegerField(min_value=1, max_value=120)
@@ -21,11 +35,7 @@ class SignUpSerializer(serializers.Serializer):
         return normalized_email
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['confirm_password']:
-            raise serializers.ValidationError(
-                {'confirm_password': 'Passwords do not match.'}
-            )
-        return attrs
+        return validate_passwords_match(attrs)
 
 
 class VerifySignUpSerializer(serializers.Serializer):
@@ -33,9 +43,7 @@ class VerifySignUpSerializer(serializers.Serializer):
     otp = serializers.CharField(min_length=6, max_length=6)
 
     def validate_otp(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError('Verification code must be 6 digits.')
-        return value
+        return validate_otp_digits(value)
 
 
 class ResendSignUpOtpSerializer(serializers.Serializer):
@@ -75,9 +83,7 @@ class VerifyForgotPasswordOtpSerializer(serializers.Serializer):
     otp = serializers.CharField(min_length=6, max_length=6)
 
     def validate_otp(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError('Verification code must be 6 digits.')
-        return value
+        return validate_otp_digits(value)
 
 
 class ResetPasswordSerializer(serializers.Serializer):
@@ -87,16 +93,10 @@ class ResetPasswordSerializer(serializers.Serializer):
     confirm_password = serializers.CharField(write_only=True, min_length=8)
 
     def validate_otp(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError('Verification code must be 6 digits.')
-        return value
+        return validate_otp_digits(value)
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['confirm_password']:
-            raise serializers.ValidationError(
-                {'confirm_password': 'Passwords do not match.'}
-            )
-        return attrs
+        return validate_passwords_match(attrs)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
