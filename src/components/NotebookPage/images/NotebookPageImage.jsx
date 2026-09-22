@@ -1,4 +1,5 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import Spinner from '../../ui/Spinner';
 import { RESIZE_HANDLES } from './constants';
 import { useImageTransform } from './hooks/useImageTransform';
 
@@ -9,6 +10,13 @@ export default function NotebookPageImage({
   onSelect,
   onChange,
 }) {
+  const isLocalSrc = image.src?.startsWith('blob:');
+  const [isLoaded, setIsLoaded] = useState(isLocalSrc || !image.src);
+
+  useEffect(() => {
+    setIsLoaded(isLocalSrc || !image.src);
+  }, [image.src, isLocalSrc]);
+
   const handleChange = useCallback(
     (patch) => {
       onChange(image.id, patch);
@@ -20,6 +28,8 @@ export default function NotebookPageImage({
     containerRef,
     onChange: handleChange,
   });
+
+  const showSkeleton = !isLoaded && !image.uploading;
 
   return (
     <div
@@ -39,14 +49,33 @@ export default function NotebookPageImage({
         startDrag(event, image);
       }}
     >
-      <img
-        className="notebook-page__image-content"
-        src={image.src}
-        alt=""
-        draggable={false}
-      />
+      {showSkeleton && (
+        <span className="notebook-page__image-skeleton" aria-hidden="true" />
+      )}
+
+      {image.src && (
+        <img
+          className={
+            isLoaded
+              ? 'notebook-page__image-content notebook-page__image-content--loaded'
+              : 'notebook-page__image-content'
+          }
+          src={image.src}
+          alt=""
+          draggable={false}
+          onLoad={() => setIsLoaded(true)}
+          onError={() => setIsLoaded(true)}
+        />
+      )}
+
+      {image.uploading && (
+        <span className="notebook-page__image-uploading" aria-hidden="true">
+          <Spinner size="sm" label="Uploading image" />
+        </span>
+      )}
 
       {isSelected &&
+        !image.uploading &&
         RESIZE_HANDLES.map((corner) => (
           <span
             key={corner}

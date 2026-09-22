@@ -17,6 +17,7 @@ import './images/NotebookPageImages.css';
  * @param {(id: string|null) => void} [props.onSelectImage]
  * @param {(id: string, patch: object) => void} [props.onUpdateImage]
  * @param {(file: File) => void} [props.onImportImage]
+ * @param {(content: object) => void} [props.onContentChange]
  */
 export default function NotebookPage({
   title = '',
@@ -28,6 +29,7 @@ export default function NotebookPage({
   onSelectImage,
   onUpdateImage,
   onImportImage,
+  onContentChange,
 }) {
   const pageContainerRef = useRef(null);
   const sheetRef = useRef(null);
@@ -41,10 +43,12 @@ export default function NotebookPage({
     registerPageInput,
     createKeyDownHandler,
     createPasteHandler,
+    createInputHandler,
     createFocusHandler,
   } = useNotebookPageInputs({
     autoFocusContent,
     onInputFocus: () => onSelectImage?.(null),
+    onContentChange,
   });
 
   const initialPageLines = initialPageLinesRef.current;
@@ -59,6 +63,7 @@ export default function NotebookPage({
         registerPageInput={registerPageInput}
         createKeyDownHandler={createKeyDownHandler}
         createPasteHandler={createPasteHandler}
+        createInputHandler={createInputHandler}
         createFocusHandler={createFocusHandler}
         images={images}
         selectedImageId={selectedImageId}

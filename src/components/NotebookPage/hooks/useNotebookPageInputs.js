@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { CONTENT_LINE_START, TOTAL_LINES } from '../constants';
+import { extractPageContent } from '../utils/extractPageContent';
 import {
   handleNotebookPageKeyDown,
   handleNotebookPagePaste,
@@ -8,6 +9,7 @@ import {
 export function useNotebookPageInputs({
   autoFocusContent = true,
   onInputFocus,
+  onContentChange,
 } = {}) {
   const pageInputRefs = useRef([]);
 
@@ -15,6 +17,14 @@ export function useNotebookPageInputs({
     () => pageInputRefs.current.filter(Boolean),
     [],
   );
+
+  const notifyContentChange = useCallback(() => {
+    if (!onContentChange) {
+      return;
+    }
+
+    onContentChange(extractPageContent(pageInputRefs.current));
+  }, [onContentChange]);
 
   const registerPageInput = useCallback(
     (index) => (element) => {
@@ -30,8 +40,12 @@ export function useNotebookPageInputs({
         currentIndex: index,
         maxLines: TOTAL_LINES,
       });
+
+      if (event.defaultPrevented) {
+        window.requestAnimationFrame(notifyContentChange);
+      }
     },
-    [getPageInputs],
+    [getPageInputs, notifyContentChange],
   );
 
   const createPasteHandler = useCallback(
@@ -41,8 +55,16 @@ export function useNotebookPageInputs({
         currentIndex: index,
         maxLines: TOTAL_LINES,
       });
+      window.requestAnimationFrame(notifyContentChange);
     },
-    [getPageInputs],
+    [getPageInputs, notifyContentChange],
+  );
+
+  const createInputHandler = useCallback(
+    () => () => {
+      notifyContentChange();
+    },
+    [notifyContentChange],
   );
 
   const createFocusHandler = useCallback(
@@ -62,6 +84,7 @@ export function useNotebookPageInputs({
     registerPageInput,
     createKeyDownHandler,
     createPasteHandler,
+    createInputHandler,
     createFocusHandler,
   };
 }

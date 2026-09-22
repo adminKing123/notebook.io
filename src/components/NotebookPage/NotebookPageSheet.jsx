@@ -18,6 +18,7 @@ export default function NotebookPageSheet({
   registerPageInput,
   createKeyDownHandler,
   createPasteHandler,
+  createInputHandler,
   createFocusHandler,
   images,
   selectedImageId,
@@ -46,6 +47,7 @@ export default function NotebookPageSheet({
         registerPageInput={registerPageInput}
         createKeyDownHandler={createKeyDownHandler}
         createPasteHandler={createPasteHandler}
+        createInputHandler={createInputHandler}
         createFocusHandler={createFocusHandler}
       />
 
@@ -54,6 +56,7 @@ export default function NotebookPageSheet({
         registerPageInput={registerPageInput}
         createKeyDownHandler={createKeyDownHandler}
         createPasteHandler={createPasteHandler}
+        createInputHandler={createInputHandler}
         createFocusHandler={createFocusHandler}
       />
 

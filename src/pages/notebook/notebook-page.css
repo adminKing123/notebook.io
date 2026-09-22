@@ -1,0 +1,28 @@
+.notebook-page-route {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.notebook-page-route__loading {
+  min-height: 100vh;
+}
+
+.notebook-page-route__error {
+  margin: 0;
+  padding: 2rem 1.5rem;
+  color: #b91c1c;
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.notebook-page-route__error--inline {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  z-index: 130;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 9999px;
+  background-color: rgba(254, 242, 242, 0.95);
+  transform: translateX(-50%);
+}

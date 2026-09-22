@@ -1,17 +1,28 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import NotebookConfigPanel from './config/NotebookConfigPanel';
-import { useNotebookPageImages } from './hooks/useNotebookPageImages';
 import { useNotebookPages } from './hooks/useNotebookPages';
 import { useNotebookZoom } from './hooks/useNotebookZoom';
 import NotebookPagesViewport from './NotebookPagesViewport';
 import NotebookZoomShell from './NotebookZoomShell';
 import './Notebook.css';
 
-/**
- * @param {object} props
- * @param {import('./types.js').NotebookPageData[]} [props.pages=[{}]]
- */
-export default function Notebook({ pages: initialPages = [{}] }) {
+export default function Notebook({
+  pages: controlledPages,
+  setPages: setControlledPages,
+  totalPages: controlledTotalPages,
+  isWindowLoading = false,
+  isSaving = false,
+  onPageIndexChange,
+  onContentChange,
+  onImportImage,
+  onUpdateImage,
+  onDeleteImage,
+  onAddPageRequest,
+  onRemovePageRequest,
+  initialPages = [{}],
+}) {
+  const isControlled = controlledPages !== undefined;
+
   const {
     pages,
     setPages,
@@ -26,21 +37,13 @@ export default function Notebook({ pages: initialPages = [{}] }) {
     goToNextPage,
     addPage,
     removePage: removePageBase,
-  } = useNotebookPages(initialPages);
-
-  const {
-    selectedImageId,
-    setSelectedImageId,
-    importImage,
-    updatePageImage,
-    deleteSelectedImage,
-    revokePageImages,
-    canDeleteSelectedImage,
-  } = useNotebookPageImages({
-    pages,
-    setPages,
-    currentPageIndex,
-    isAnimatingRef,
+  } = useNotebookPages(isControlled ? controlledPages : initialPages, {
+    controlledPages: isControlled ? controlledPages : undefined,
+    setControlledPages: isControlled ? setControlledPages : undefined,
+    totalPages: isControlled ? controlledTotalPages : undefined,
+    onPageIndexChange,
+    onAddPageRequest,
+    onRemovePageRequest,
   });
 
   const {
@@ -53,15 +56,85 @@ export default function Notebook({ pages: initialPages = [{}] }) {
     shellHeight,
   } = useNotebookZoom();
 
+  const [selectedImageId, setSelectedImageId] = useState(null);
+
+  const importImage = useCallback(
+    async (file) => {
+      if (isAnimatingRef.current || !file?.type.startsWith('image/')) {
+        return;
+      }
+
+      if (onImportImage) {
+        const imageId = await onImportImage(currentPageIndex, file);
+        if (imageId) {
+          setSelectedImageId(imageId);
+        }
+        return;
+      }
+    },
+    [currentPageIndex, isAnimatingRef, onImportImage],
+  );
+
+  const updatePageImage = useCallback(
+    (imageId, patch) => {
+      onUpdateImage?.(currentPageIndex, imageId, patch);
+    },
+    [currentPageIndex, onUpdateImage],
+  );
+
+  const deleteSelectedImage = useCallback(() => {
+    if (!selectedImageId) {
+      return;
+    }
+
+    onDeleteImage?.(currentPageIndex, selectedImageId);
+    setSelectedImageId(null);
+  }, [currentPageIndex, onDeleteImage, selectedImageId]);
+
   const removePage = useCallback(() => {
     removePageBase({
-      revokePageImages,
+      revokePageImages: () => {},
       onClearSelectedImage: () => setSelectedImageId(null),
     });
-  }, [removePageBase, revokePageImages, setSelectedImageId]);
+  }, [removePageBase]);
+
+  const currentPageImages = pages[currentPageIndex]?.images ?? [];
+  const canDeleteSelectedImage = currentPageImages.some(
+    (image) => image.id === selectedImageId,
+  );
+
+  useEffect(() => {
+    const hasSelectedImage = currentPageImages.some((image) => image.id === selectedImageId);
+    if (!hasSelectedImage) {
+      setSelectedImageId(null);
+    }
+  }, [currentPageImages, selectedImageId]);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (
+        (event.key === 'Delete' || event.key === 'Backspace') &&
+        selectedImageId &&
+        !(event.target instanceof HTMLInputElement)
+      ) {
+        event.preventDefault();
+        deleteSelectedImage();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [deleteSelectedImage, selectedImageId]);
 
   return (
     <div className="notebook">
+      {(isWindowLoading || isSaving) && (
+        <div className="notebook__status-bar" aria-live="polite">
+          {isWindowLoading && <span className="notebook__status-label">Loading pages</span>}
+          {isSaving && <span className="notebook__status-label">Saving</span>}
+        </div>
+      )}
+
       <NotebookZoomShell
         zoom={zoom}
         zoomContentRef={zoomContentRef}
@@ -76,6 +149,7 @@ export default function Notebook({ pages: initialPages = [{}] }) {
           onSelectImage={setSelectedImageId}
           onUpdateImage={updatePageImage}
           onImportImage={importImage}
+          onContentChange={onContentChange}
         />
       </NotebookZoomShell>
 

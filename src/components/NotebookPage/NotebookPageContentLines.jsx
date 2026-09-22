@@ -6,6 +6,7 @@ export default function NotebookPageContentLines({
   registerPageInput,
   createKeyDownHandler,
   createPasteHandler,
+  createInputHandler,
   createFocusHandler,
 }) {
   return (
@@ -21,6 +22,7 @@ export default function NotebookPageContentLines({
             inputRef={registerPageInput(index)}
             onKeyDown={createKeyDownHandler(index)}
             onPaste={createPasteHandler(index)}
+            onInput={createInputHandler()}
             onFocus={createFocusHandler()}
           />
         );

@@ -8,6 +8,7 @@ export default function NotebookPageHeader({
   registerPageInput,
   createKeyDownHandler,
   createPasteHandler,
+  createInputHandler,
   createFocusHandler,
 }) {
   return (
@@ -20,6 +21,7 @@ export default function NotebookPageHeader({
         rowRef={firstPageRowRef}
         onKeyDown={createKeyDownHandler(TITLE_LINE_INDEX)}
         onPaste={createPasteHandler(TITLE_LINE_INDEX)}
+        onInput={createInputHandler()}
         onFocus={createFocusHandler()}
       />
 
@@ -30,6 +32,7 @@ export default function NotebookPageHeader({
         inputRef={registerPageInput(SUBTITLE_LINE_INDEX)}
         onKeyDown={createKeyDownHandler(SUBTITLE_LINE_INDEX)}
         onPaste={createPasteHandler(SUBTITLE_LINE_INDEX)}
+        onInput={createInputHandler()}
         onFocus={createFocusHandler()}
       />
 

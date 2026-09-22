@@ -1,3 +1,4 @@
+import Spinner from '../ui/Spinner';
 import NotebookPage from '../NotebookPage';
 
 export default function NotebookPagesViewport({
@@ -9,6 +10,7 @@ export default function NotebookPagesViewport({
   onSelectImage,
   onUpdateImage,
   onImportImage,
+  onContentChange,
 }) {
   return (
     <div className="notebook__pages-viewport" ref={viewportRef}>
@@ -20,25 +22,26 @@ export default function NotebookPagesViewport({
           }}
           className="notebook__page"
         >
-          <NotebookPage
-            title={page.title}
-            subtitle={page.subtitle}
-            content={page.content}
-            autoFocusContent={index === 0 && currentPageIndex === 0}
-            images={page.images}
-            selectedImageId={
-              index === currentPageIndex ? selectedImageId : null
-            }
-            onSelectImage={
-              index === currentPageIndex ? onSelectImage : undefined
-            }
-            onUpdateImage={
-              index === currentPageIndex ? onUpdateImage : undefined
-            }
-            onImportImage={
-              index === currentPageIndex ? onImportImage : undefined
-            }
-          />
+          {page.loading ? (
+            <div className="notebook__page-loading">
+              <Spinner size="md" label="Loading page" />
+            </div>
+          ) : (
+            <NotebookPage
+              title={page.title}
+              subtitle={page.subtitle}
+              content={page.content}
+              autoFocusContent={index === 0 && currentPageIndex === 0}
+              images={page.images}
+              selectedImageId={index === currentPageIndex ? selectedImageId : null}
+              onSelectImage={index === currentPageIndex ? onSelectImage : undefined}
+              onUpdateImage={index === currentPageIndex ? onUpdateImage : undefined}
+              onImportImage={index === currentPageIndex ? onImportImage : undefined}
+              onContentChange={
+                onContentChange ? (content) => onContentChange(index, content) : undefined
+              }
+            />
+          )}
         </div>
       ))}
     </div>
