@@ -6,7 +6,7 @@ from accounts.models import EmailOTP, User
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     ordering = ('email',)
-    list_display = ('email', 'full_name', 'age', 'is_active', 'date_joined')
+    list_display = ('email', 'full_name', 'date_of_birth', 'is_active', 'date_joined')
     search_fields = ('email', 'full_name')
     readonly_fields = ('date_joined', 'last_login')
 

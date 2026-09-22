@@ -91,15 +91,15 @@ class SignUpView(APIView):
                 email=data['email'],
                 password=data['password'],
                 full_name=data['full_name'],
-                age=data['age'],
+                date_of_birth=data['date_of_birth'],
                 is_active=False,
             )
         else:
             user.full_name = data['full_name']
-            user.age = data['age']
+            user.date_of_birth = data['date_of_birth']
             user.set_password(data['password'])
             user.is_active = False
-            user.save(update_fields=['full_name', 'age', 'password', 'is_active'])
+            user.save(update_fields=['full_name', 'date_of_birth', 'password', 'is_active'])
 
         send_signup_otp(user.email)
 
