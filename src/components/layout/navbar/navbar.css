@@ -1,0 +1,42 @@
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--color-border);
+  background-color: rgba(253, 251, 247, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.app-navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 72rem;
+  height: 4rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.app-navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+}
+
+.app-navbar__brand-mark {
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 1px solid var(--color-text-primary);
+  border-radius: 1px;
+  background-color: var(--color-input-bg);
+}
+
+.app-navbar__brand-text {
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}

@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import AuthRoute from './components/auth/AuthRoute';
-import DashboardPage from './pages/DashboardPage';
+import DashboardPage from './pages/dashboard/DashboardPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
