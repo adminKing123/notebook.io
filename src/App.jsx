@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import AuthRoute from './components/auth/AuthRoute';
+import { TooltipProvider } from './components/ui/Tooltip';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LoginPage from './pages/LoginPage';
@@ -11,8 +12,9 @@ import './App.css';
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <main className="home">
+      <TooltipProvider>
+        <BrowserRouter>
+          <main className="home">
           <Routes>
             <Route
               path={ROUTES.LOGIN}
@@ -48,8 +50,9 @@ export default function App() {
             />
             <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
           </Routes>
-        </main>
-      </BrowserRouter>
+          </main>
+        </BrowserRouter>
+      </TooltipProvider>
     </AuthProvider>
   );
 }
