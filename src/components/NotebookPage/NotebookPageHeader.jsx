@@ -15,7 +15,6 @@ export default function NotebookPageHeader({
       <NotebookPageLine
         index={TITLE_LINE_INDEX}
         variant="title"
-        placeholder="Title"
         defaultValue={titleValue}
         inputRef={registerPageInput(TITLE_LINE_INDEX)}
         rowRef={firstPageRowRef}

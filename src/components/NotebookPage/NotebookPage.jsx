@@ -1,18 +1,10 @@
 import { useRef } from 'react';
-import NotebookPageHeader from './NotebookPageHeader';
-import NotebookPageImages from './NotebookPageImages';
-import NotebookPageLine from './NotebookPageLine';
-import {
-  CONTENT_LINE_COUNT,
-  CONTENT_LINE_START,
-  SUBTITLE_LINE_INDEX,
-  TITLE_LINE_INDEX,
-} from './constants';
+import NotebookPageSheet from './NotebookPageSheet';
 import { useNotebookPageInputs } from './hooks/useNotebookPageInputs';
 import { useTypographyScale } from './hooks/useTypographyScale';
 import { buildInitialLines } from './utils/buildInitialLines';
 import './NotebookPage.css';
-import './NotebookPageImages.css';
+import './images/NotebookPageImages.css';
 
 /**
  * @param {object} props
@@ -59,71 +51,21 @@ export default function NotebookPage({
 
   return (
     <div className="notebook-page" ref={pageContainerRef}>
-      <div
-        ref={sheetRef}
-        className="notebook-page__sheet"
-        style={{
-          '--notebook-page-font-size': `${typography.fontSize}px`,
-          '--notebook-page-line-height': `${typography.lineHeight}px`,
-        }}
-        onDragOverCapture={(event) => {
-          if (event.dataTransfer.types.includes('Files')) {
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'copy';
-          }
-        }}
-        onDropCapture={(event) => {
-          const file = event.dataTransfer.files?.[0];
-          if (file?.type.startsWith('image/')) {
-            event.preventDefault();
-            onImportImage?.(file);
-          }
-        }}
-      >
-        <div className="notebook-page__margin-line-1" aria-hidden="true" />
-        <div className="notebook-page__margin-line-2" aria-hidden="true" />
-
-        <NotebookPageHeader
-          titleValue={initialPageLines[TITLE_LINE_INDEX]}
-          subtitleValue={initialPageLines[SUBTITLE_LINE_INDEX]}
-          firstPageRowRef={firstPageRowRef}
-          registerPageInput={registerPageInput}
-          createKeyDownHandler={createKeyDownHandler}
-          createPasteHandler={createPasteHandler}
-          createFocusHandler={createFocusHandler}
-        />
-
-        <div className="notebook-page__lines">
-          {Array.from({ length: CONTENT_LINE_COUNT }, (_, offset) => {
-            const index = CONTENT_LINE_START + offset;
-
-            return (
-              <NotebookPageLine
-                key={index}
-                index={index}
-                defaultValue={initialPageLines[index]}
-                inputRef={registerPageInput(index)}
-                placeholder={
-                  index === CONTENT_LINE_START ? 'Start typing here...' : ''
-                }
-                onKeyDown={createKeyDownHandler(index)}
-                onPaste={createPasteHandler(index)}
-                onFocus={createFocusHandler()}
-              />
-            );
-          })}
-        </div>
-
-        {onSelectImage && onUpdateImage && (
-          <NotebookPageImages
-            images={images}
-            selectedImageId={selectedImageId}
-            onSelectImage={onSelectImage}
-            onUpdateImage={onUpdateImage}
-            containerRef={sheetRef}
-          />
-        )}
-      </div>
+      <NotebookPageSheet
+        sheetRef={sheetRef}
+        typography={typography}
+        initialPageLines={initialPageLines}
+        firstPageRowRef={firstPageRowRef}
+        registerPageInput={registerPageInput}
+        createKeyDownHandler={createKeyDownHandler}
+        createPasteHandler={createPasteHandler}
+        createFocusHandler={createFocusHandler}
+        images={images}
+        selectedImageId={selectedImageId}
+        onSelectImage={onSelectImage}
+        onUpdateImage={onUpdateImage}
+        onImportImage={onImportImage}
+      />
     </div>
   );
 }

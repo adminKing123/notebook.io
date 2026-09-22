@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
+import { RESIZE_HANDLES } from './constants';
 import { useImageTransform } from './hooks/useImageTransform';
-
-const RESIZE_HANDLES = ['nw', 'ne', 'sw', 'se'];
 
 export default function NotebookPageImage({
   image,

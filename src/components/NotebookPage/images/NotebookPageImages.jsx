@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import NotebookPageImage from './NotebookPageImage';
 
 export default function NotebookPageImages({
@@ -8,13 +7,6 @@ export default function NotebookPageImages({
   onUpdateImage,
   containerRef,
 }) {
-  const handleUpdateImage = useCallback(
-    (imageId, patch) => {
-      onUpdateImage(imageId, patch);
-    },
-    [onUpdateImage],
-  );
-
   if (images.length === 0) {
     return null;
   }
@@ -35,7 +27,7 @@ export default function NotebookPageImages({
           isSelected={image.id === selectedImageId}
           containerRef={containerRef}
           onSelect={onSelectImage}
-          onChange={handleUpdateImage}
+          onChange={onUpdateImage}
         />
       ))}
     </div>
