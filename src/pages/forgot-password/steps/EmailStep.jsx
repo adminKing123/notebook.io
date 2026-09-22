@@ -1,14 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import AuthForm from '../../../components/auth/shared/AuthForm';
+import AuthFormMessage from '../../../components/auth/shared/AuthFormMessage';
 import FormActions from '../../../components/ui/FormActions';
 import TextField from '../../../components/ui/TextField';
 import { ROUTES } from '../../../routes';
 
-export default function EmailStep({ formData, updateField, onContinue }) {
+export default function EmailStep({
+  formData,
+  updateField,
+  onContinue,
+  isSubmitting = false,
+  error = '',
+}) {
   const navigate = useNavigate();
 
   return (
     <AuthForm onSubmit={onContinue}>
+      <AuthFormMessage message={error} />
+
       <TextField
         id="resetEmail"
         label="Email Address"
@@ -24,6 +33,7 @@ export default function EmailStep({ formData, updateField, onContinue }) {
         continueLabel="Send Code"
         continueType="submit"
         onContinue={onContinue}
+        isSubmitting={isSubmitting}
       />
     </AuthForm>
   );

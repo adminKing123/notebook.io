@@ -1,10 +1,18 @@
 import AuthForm from '../../../components/auth/shared/AuthForm';
+import AuthFormMessage from '../../../components/auth/shared/AuthFormMessage';
 import FormActions from '../../../components/ui/FormActions';
 import TextField from '../../../components/ui/TextField';
 
-export default function ProfileStep({ formData, updateField, onContinue }) {
+export default function ProfileStep({
+  formData,
+  updateField,
+  onContinue,
+  isSubmitting = false,
+  error = '',
+}) {
   return (
     <AuthForm onSubmit={onContinue}>
+      <AuthFormMessage message={error} />
       <TextField
         id="fullName"
         label="Full Name"
@@ -35,7 +43,12 @@ export default function ProfileStep({ formData, updateField, onContinue }) {
         autoComplete="email"
       />
 
-      <FormActions continueLabel="Continue" continueType="submit" onContinue={onContinue} />
+      <FormActions
+        continueLabel="Continue"
+        continueType="submit"
+        onContinue={onContinue}
+        isSubmitting={isSubmitting}
+      />
     </AuthForm>
   );
 }

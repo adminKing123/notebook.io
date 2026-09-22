@@ -1,22 +1,16 @@
-import { useState } from 'react';
 import AuthFooter from '../components/auth/shared/AuthFooter';
 import AuthForm from '../components/auth/shared/AuthForm';
+import AuthFormMessage from '../components/auth/shared/AuthFormMessage';
 import AuthInlineLink from '../components/auth/shared/AuthInlineLink';
 import AuthLayout from '../components/auth/shared/AuthLayout';
 import FormActions from '../components/ui/FormActions';
 import PasswordField from '../components/ui/PasswordField';
 import TextField from '../components/ui/TextField';
-import { INITIAL_LOGIN_FORM } from './login/constants';
 import { ROUTES } from '../routes';
+import { useLoginForm } from './login/hooks/useLoginForm';
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState(INITIAL_LOGIN_FORM);
-
-  const updateField = (field, value) => {
-    setFormData((previous) => ({ ...previous, [field]: value }));
-  };
-
-  const handleSubmit = () => {};
+  const { formData, updateField, handleSubmit, isSubmitting, error } = useLoginForm();
 
   return (
     <AuthLayout
@@ -25,6 +19,8 @@ export default function LoginPage() {
       showProgress={false}
     >
       <AuthForm onSubmit={handleSubmit}>
+        <AuthFormMessage message={error} />
+
         <TextField
           id="loginEmail"
           label="Email Address"
@@ -48,7 +44,12 @@ export default function LoginPage() {
           Forgot password?
         </AuthInlineLink>
 
-        <FormActions continueLabel="Sign In" continueType="submit" onContinue={handleSubmit} />
+        <FormActions
+          continueLabel="Sign In"
+          continueType="submit"
+          onContinue={handleSubmit}
+          isSubmitting={isSubmitting}
+        />
       </AuthForm>
 
       <AuthFooter

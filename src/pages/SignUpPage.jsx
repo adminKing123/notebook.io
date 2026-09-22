@@ -1,4 +1,5 @@
 import AuthFooter from '../components/auth/shared/AuthFooter';
+import AuthFormMessage from '../components/auth/shared/AuthFormMessage';
 import AuthLayout from '../components/auth/shared/AuthLayout';
 import {
   SIGN_UP_STEP_COUNT,
@@ -31,9 +32,15 @@ export default function SignUpPage() {
     currentStep,
     formData,
     updateField,
-    goNext,
-    goBack,
     isFirstStep,
+    isSubmitting,
+    error,
+    successMessage,
+    handleProfileContinue,
+    handlePasswordContinue,
+    handleOtpContinue,
+    handleResendOtp,
+    handleBack,
   } = useSignUpForm();
 
   const { title, description } = STEP_CONTENT[currentStep];
@@ -45,7 +52,9 @@ export default function SignUpPage() {
           <ProfileStep
             formData={formData}
             updateField={updateField}
-            onContinue={goNext}
+            onContinue={handleProfileContinue}
+            isSubmitting={isSubmitting}
+            error={error}
           />
         );
       case SIGN_UP_STEPS.PASSWORD:
@@ -53,8 +62,10 @@ export default function SignUpPage() {
           <PasswordStep
             formData={formData}
             updateField={updateField}
-            onBack={goBack}
-            onContinue={goNext}
+            onBack={handleBack}
+            onContinue={handlePasswordContinue}
+            isSubmitting={isSubmitting}
+            error={error}
           />
         );
       case SIGN_UP_STEPS.OTP:
@@ -63,8 +74,12 @@ export default function SignUpPage() {
             email={formData.email}
             otp={formData.otp}
             onOtpChange={(value) => updateField('otp', value)}
-            onBack={goBack}
-            onContinue={goNext}
+            onBack={handleBack}
+            onContinue={handleOtpContinue}
+            onResend={handleResendOtp}
+            isSubmitting={isSubmitting}
+            error={error}
+            successMessage={successMessage}
           />
         );
       default:

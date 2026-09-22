@@ -7,16 +7,17 @@ export default function FormActions({
   continueLabel = 'Continue',
   backLabel = 'Back',
   continueType = 'button',
+  isSubmitting = false,
 }) {
   return (
     <div className="ui-form-actions">
       {onBack && (
-        <Button variant="secondary" onClick={onBack}>
+        <Button variant="secondary" onClick={onBack} disabled={isSubmitting}>
           {backLabel}
         </Button>
       )}
-      <Button type={continueType} onClick={onContinue}>
-        {continueLabel}
+      <Button type={continueType} onClick={onContinue} disabled={isSubmitting}>
+        {isSubmitting ? 'Please wait...' : continueLabel}
       </Button>
     </div>
   );

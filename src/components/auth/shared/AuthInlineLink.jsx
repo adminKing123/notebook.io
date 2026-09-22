@@ -4,6 +4,7 @@ export default function AuthInlineLink({
   children,
   to,
   onClick,
+  disabled = false,
   className = 'auth__inline-link',
 }) {
   if (to) {
@@ -15,7 +16,7 @@ export default function AuthInlineLink({
   }
 
   return (
-    <button type="button" className={className} onClick={onClick}>
+    <button type="button" className={className} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

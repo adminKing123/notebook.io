@@ -6,6 +6,7 @@ export default function PasswordFieldsStep({
   updateField,
   onBack,
   onContinue,
+  isSubmitting = false,
   continueLabel = 'Continue',
   passwordLabel = 'Password',
   confirmLabel = 'Confirm Password',
@@ -39,6 +40,7 @@ export default function PasswordFieldsStep({
         continueLabel={continueLabel}
         continueType="submit"
         onContinue={onContinue}
+        isSubmitting={isSubmitting}
       />
     </>
   );

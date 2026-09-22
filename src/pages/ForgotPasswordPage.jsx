@@ -31,9 +31,15 @@ export default function ForgotPasswordPage() {
     currentStep,
     formData,
     updateField,
-    goNext,
-    goBack,
     isFirstStep,
+    isSubmitting,
+    error,
+    successMessage,
+    handleEmailContinue,
+    handleOtpContinue,
+    handlePasswordContinue,
+    handleResendOtp,
+    handleBack,
   } = useForgotPasswordForm();
 
   const { title, description } = STEP_CONTENT[currentStep];
@@ -45,7 +51,9 @@ export default function ForgotPasswordPage() {
           <EmailStep
             formData={formData}
             updateField={updateField}
-            onContinue={goNext}
+            onContinue={handleEmailContinue}
+            isSubmitting={isSubmitting}
+            error={error}
           />
         );
       case FORGOT_PASSWORD_STEPS.OTP:
@@ -54,8 +62,12 @@ export default function ForgotPasswordPage() {
             email={formData.email}
             otp={formData.otp}
             onOtpChange={(value) => updateField('otp', value)}
-            onBack={goBack}
-            onContinue={goNext}
+            onBack={handleBack}
+            onContinue={handleOtpContinue}
+            onResend={handleResendOtp}
+            isSubmitting={isSubmitting}
+            error={error}
+            successMessage={successMessage}
           />
         );
       case FORGOT_PASSWORD_STEPS.PASSWORD:
@@ -63,8 +75,10 @@ export default function ForgotPasswordPage() {
           <ResetPasswordStep
             formData={formData}
             updateField={updateField}
-            onBack={goBack}
-            onContinue={goNext}
+            onBack={handleBack}
+            onContinue={handlePasswordContinue}
+            isSubmitting={isSubmitting}
+            error={error}
           />
         );
       default:

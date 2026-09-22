@@ -6,6 +6,7 @@ export default function OtpVerificationFields({
   otp,
   onOtpChange,
   onResend,
+  isResending = false,
 }) {
   return (
     <>
@@ -19,8 +20,8 @@ export default function OtpVerificationFields({
         <OtpInput value={otp} onChange={onOtpChange} />
       </div>
 
-      <AuthInlineLink onClick={onResend}>
-        Didn&apos;t receive a code? Resend
+      <AuthInlineLink onClick={onResend} disabled={isResending}>
+        {isResending ? 'Sending code...' : "Didn't receive a code? Resend"}
       </AuthInlineLink>
     </>
   );
