@@ -5,6 +5,17 @@
   padding-bottom: 5rem;
 }
 
+.notebook__zoom-shell {
+  width: 100%;
+  overflow: auto;
+}
+
+.notebook__zoom-content {
+  width: 100%;
+  transform-origin: top center;
+  transition: transform 0.15s ease;
+}
+
 .notebook__pages-viewport {
   position: relative;
   width: 100%;
@@ -94,4 +105,13 @@
 
 .notebook__config-file-input {
   display: none;
+}
+
+.notebook__config-zoom-label {
+  min-width: 2.75rem;
+  color: #334155;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
 }

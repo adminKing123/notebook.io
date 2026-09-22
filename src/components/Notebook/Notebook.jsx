@@ -10,6 +10,11 @@ import { useNotebookPageTransition } from './hooks/useNotebookPageTransition';
 import { createPageId, normalizePages } from './utils/normalizePages';
 import './Notebook.css';
 
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 1;
+const ZOOM_STEP = 0.1;
+const DEFAULT_ZOOM = 1;
+
 /**
  * @typedef {object} NotebookPageImage
  * @property {string} id
@@ -38,6 +43,7 @@ export default function Notebook({ pages: initialPages = [{}] }) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [pendingPageIndex, setPendingPageIndex] = useState(null);
   const [selectedImageId, setSelectedImageId] = useState(null);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
   const viewportRef = useRef(null);
   const pageRefs = useRef([]);
@@ -74,6 +80,18 @@ export default function Notebook({ pages: initialPages = [{}] }) {
   const goToNextPage = useCallback(() => {
     navigateToIndex(currentPageIndex + 1);
   }, [currentPageIndex, navigateToIndex]);
+
+  const zoomIn = useCallback(() => {
+    setZoom((previousZoom) =>
+      Math.min(ZOOM_MAX, Number((previousZoom + ZOOM_STEP).toFixed(2))),
+    );
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setZoom((previousZoom) =>
+      Math.max(ZOOM_MIN, Number((previousZoom - ZOOM_STEP).toFixed(2))),
+    );
+  }, []);
 
   const addPage = useCallback(() => {
     if (isAnimatingRef.current) return;
@@ -234,49 +252,63 @@ export default function Notebook({ pages: initialPages = [{}] }) {
 
   return (
     <div className="notebook">
-      <div className="notebook__pages-viewport" ref={viewportRef}>
-        {pages.map((page, index) => (
-          <div
-            key={page.id}
-            ref={(element) => {
-              pageRefs.current[index] = element;
-            }}
-            className="notebook__page"
-          >
-            <NotebookPage
-              title={page.title}
-              subtitle={page.subtitle}
-              content={page.content}
-              autoFocusContent={index === 0 && currentPageIndex === 0}
-              images={page.images}
-              selectedImageId={
-                index === currentPageIndex ? selectedImageId : null
-              }
-              onSelectImage={
-                index === currentPageIndex ? setSelectedImageId : undefined
-              }
-              onUpdateImage={
-                index === currentPageIndex ? updatePageImage : undefined
-              }
-              onImportImage={
-                index === currentPageIndex ? importImage : undefined
-              }
-            />
+      <div className="notebook__zoom-shell">
+        <div
+          className="notebook__zoom-content"
+          style={{
+            transform: `scale(${zoom})`,
+          }}
+        >
+          <div className="notebook__pages-viewport" ref={viewportRef}>
+            {pages.map((page, index) => (
+              <div
+                key={page.id}
+                ref={(element) => {
+                  pageRefs.current[index] = element;
+                }}
+                className="notebook__page"
+              >
+                <NotebookPage
+                  title={page.title}
+                  subtitle={page.subtitle}
+                  content={page.content}
+                  autoFocusContent={index === 0 && currentPageIndex === 0}
+                  images={page.images}
+                  selectedImageId={
+                    index === currentPageIndex ? selectedImageId : null
+                  }
+                  onSelectImage={
+                    index === currentPageIndex ? setSelectedImageId : undefined
+                  }
+                  onUpdateImage={
+                    index === currentPageIndex ? updatePageImage : undefined
+                  }
+                  onImportImage={
+                    index === currentPageIndex ? importImage : undefined
+                  }
+                />
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
       <NotebookConfigPanel
         currentPage={currentPage}
         totalPages={totalPages}
+        zoom={zoom}
         onGoToPage={goToPage}
         onPreviousPage={goToPreviousPage}
         onNextPage={goToNextPage}
+        onZoomIn={zoomIn}
+        onZoomOut={zoomOut}
         onAddPage={addPage}
         onRemovePage={removePage}
         onImportImage={importImage}
         onDeleteSelectedImage={deleteSelectedImage}
         canRemovePage={totalPages > 1}
+        canZoomIn={zoom < ZOOM_MAX}
+        canZoomOut={zoom > ZOOM_MIN}
         canDeleteSelectedImage={currentPageImages.some(
           (image) => image.id === selectedImageId,
         )}

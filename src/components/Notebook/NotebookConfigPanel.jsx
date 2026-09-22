@@ -6,19 +6,26 @@ import {
   MdDeleteOutline,
   MdHighlightOff,
   MdImage,
+  MdZoomIn,
+  MdZoomOut,
 } from 'react-icons/md';
 
 export default function NotebookConfigPanel({
   currentPage,
   totalPages,
+  zoom,
   onGoToPage,
   onPreviousPage,
   onNextPage,
+  onZoomIn,
+  onZoomOut,
   onAddPage,
   onRemovePage,
   onImportImage,
   onDeleteSelectedImage,
   canRemovePage,
+  canZoomIn,
+  canZoomOut,
   canDeleteSelectedImage,
 }) {
   const [pageInput, setPageInput] = useState(String(currentPage));
@@ -83,6 +90,30 @@ export default function NotebookConfigPanel({
         disabled={currentPage >= totalPages}
       >
         <MdChevronRight />
+      </button>
+
+      <span className="notebook__config-divider" aria-hidden="true" />
+
+      <button
+        type="button"
+        className="notebook__config-button"
+        title="Zoom out"
+        onClick={onZoomOut}
+        disabled={!canZoomOut}
+      >
+        <MdZoomOut />
+      </button>
+
+      <span className="notebook__config-zoom-label">{Math.round(zoom * 100)}%</span>
+
+      <button
+        type="button"
+        className="notebook__config-button"
+        title="Zoom in"
+        onClick={onZoomIn}
+        disabled={!canZoomIn}
+      >
+        <MdZoomIn />
       </button>
 
       <span className="notebook__config-divider" aria-hidden="true" />
