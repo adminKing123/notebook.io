@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   MdAdd,
   MdChevronLeft,
   MdChevronRight,
   MdDeleteOutline,
+  MdHighlightOff,
+  MdImage,
 } from 'react-icons/md';
 
 export default function NotebookConfigPanel({
@@ -14,9 +16,13 @@ export default function NotebookConfigPanel({
   onNextPage,
   onAddPage,
   onRemovePage,
+  onImportImage,
+  onDeleteSelectedImage,
   canRemovePage,
+  canDeleteSelectedImage,
 }) {
   const [pageInput, setPageInput] = useState(String(currentPage));
+  const imageInputRef = useRef(null);
 
   useEffect(() => {
     setPageInput(String(currentPage));
@@ -31,6 +37,14 @@ export default function NotebookConfigPanel({
     }
 
     onGoToPage(pageNumber);
+  };
+
+  const handleImageInputChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onImportImage(file);
+    }
+    event.target.value = '';
   };
 
   return (
@@ -69,6 +83,35 @@ export default function NotebookConfigPanel({
         disabled={currentPage >= totalPages}
       >
         <MdChevronRight />
+      </button>
+
+      <span className="notebook__config-divider" aria-hidden="true" />
+
+      <button
+        type="button"
+        className="notebook__config-button"
+        title="Import image"
+        onClick={() => imageInputRef.current?.click()}
+      >
+        <MdImage />
+      </button>
+
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        className="notebook__config-file-input"
+        onChange={handleImageInputChange}
+      />
+
+      <button
+        type="button"
+        className="notebook__config-button notebook__config-button--danger"
+        title="Delete selected image"
+        onClick={onDeleteSelectedImage}
+        disabled={!canDeleteSelectedImage}
+      >
+        <MdHighlightOff />
       </button>
 
       <span className="notebook__config-divider" aria-hidden="true" />

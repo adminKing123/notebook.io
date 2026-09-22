@@ -6,6 +6,7 @@ export default function NotebookPageLine({
   rowRef,
   onKeyDown,
   onPaste,
+  onFocus,
   variant = 'default',
   placeholder = '',
   defaultValue = '',
@@ -23,6 +24,7 @@ export default function NotebookPageLine({
         spellCheck={false}
         onKeyDown={onKeyDown}
         onPaste={onPaste}
+        onFocus={onFocus}
       />
     </div>
   );

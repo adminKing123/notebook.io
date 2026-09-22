@@ -5,7 +5,10 @@ import {
   handleNotebookPagePaste,
 } from '../utils/notebookPageInputHandlers';
 
-export function useNotebookPageInputs({ autoFocusContent = true } = {}) {
+export function useNotebookPageInputs({
+  autoFocusContent = true,
+  onInputFocus,
+} = {}) {
   const pageInputRefs = useRef([]);
 
   const getPageInputs = useCallback(
@@ -42,6 +45,13 @@ export function useNotebookPageInputs({ autoFocusContent = true } = {}) {
     [getPageInputs],
   );
 
+  const createFocusHandler = useCallback(
+    () => () => {
+      onInputFocus?.();
+    },
+    [onInputFocus],
+  );
+
   useEffect(() => {
     if (autoFocusContent) {
       pageInputRefs.current[CONTENT_LINE_START]?.focus();
@@ -52,5 +62,6 @@ export function useNotebookPageInputs({ autoFocusContent = true } = {}) {
     registerPageInput,
     createKeyDownHandler,
     createPasteHandler,
+    createFocusHandler,
   };
 }

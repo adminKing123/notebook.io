@@ -1,0 +1,68 @@
+.notebook-page__images {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.notebook-page__image {
+  position: absolute;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.notebook-page__image:active {
+  cursor: grabbing;
+}
+
+.notebook-page__image-content {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.notebook-page__image--selected {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.notebook-page__image-handle {
+  position: absolute;
+  z-index: 2;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #2563eb;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  cursor: nwse-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.notebook-page__image-handle--nw {
+  top: -6px;
+  left: -6px;
+  cursor: nwse-resize;
+}
+
+.notebook-page__image-handle--ne {
+  top: -6px;
+  right: -6px;
+  cursor: nesw-resize;
+}
+
+.notebook-page__image-handle--sw {
+  bottom: -6px;
+  left: -6px;
+  cursor: nesw-resize;
+}
+
+.notebook-page__image-handle--se {
+  right: -6px;
+  bottom: -6px;
+  cursor: nwse-resize;
+}

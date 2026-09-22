@@ -8,6 +8,7 @@ export default function NotebookPageHeader({
   registerPageInput,
   createKeyDownHandler,
   createPasteHandler,
+  createFocusHandler,
 }) {
   return (
     <header className="notebook-page__header">
@@ -20,6 +21,7 @@ export default function NotebookPageHeader({
         rowRef={firstPageRowRef}
         onKeyDown={createKeyDownHandler(TITLE_LINE_INDEX)}
         onPaste={createPasteHandler(TITLE_LINE_INDEX)}
+        onFocus={createFocusHandler()}
       />
 
       <NotebookPageLine
@@ -29,6 +31,7 @@ export default function NotebookPageHeader({
         inputRef={registerPageInput(SUBTITLE_LINE_INDEX)}
         onKeyDown={createKeyDownHandler(SUBTITLE_LINE_INDEX)}
         onPaste={createPasteHandler(SUBTITLE_LINE_INDEX)}
+        onFocus={createFocusHandler()}
       />
 
       <div className="notebook-page__header-divider" aria-hidden="true" />
