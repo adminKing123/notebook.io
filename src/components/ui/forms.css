@@ -79,8 +79,43 @@
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
-.ui-field--password .ui-field__input {
+.ui-field--password .ui-field__input,
+.ui-field--date .ui-field__input {
   padding-right: 2.25rem;
+}
+
+.ui-field__input--date {
+  color-scheme: light;
+}
+
+.ui-field__input--date::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ui-field__input--date::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.ui-field__date-trigger {
+  position: absolute;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 1.0625rem;
+  cursor: pointer;
+}
+
+.ui-field__date-trigger:hover {
+  color: var(--color-text-body);
 }
 
 .ui-field__toggle {

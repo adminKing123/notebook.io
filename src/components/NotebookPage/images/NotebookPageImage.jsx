@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import Spinner from '../../ui/Spinner';
 import { RESIZE_HANDLES } from './constants';
 import { useImageTransform } from './hooks/useImageTransform';
+import { useImageLoadState } from './hooks/useImageLoadState';
 
 export default function NotebookPageImage({
   image,
@@ -10,12 +11,7 @@ export default function NotebookPageImage({
   onSelect,
   onChange,
 }) {
-  const isLocalSrc = image.src?.startsWith('blob:');
-  const [isLoaded, setIsLoaded] = useState(isLocalSrc || !image.src);
-
-  useEffect(() => {
-    setIsLoaded(isLocalSrc || !image.src);
-  }, [image.src, isLocalSrc]);
+  const { setImageRef, isLoaded, markLoaded } = useImageLoadState(image.src);
 
   const handleChange = useCallback(
     (patch) => {
@@ -29,7 +25,7 @@ export default function NotebookPageImage({
     onChange: handleChange,
   });
 
-  const showSkeleton = !isLoaded && !image.uploading;
+  const showSkeleton = Boolean(image.src) && !isLoaded && !image.uploading;
 
   return (
     <div
@@ -55,6 +51,7 @@ export default function NotebookPageImage({
 
       {image.src && (
         <img
+          ref={setImageRef}
           className={
             isLoaded
               ? 'notebook-page__image-content notebook-page__image-content--loaded'
@@ -63,8 +60,8 @@ export default function NotebookPageImage({
           src={image.src}
           alt=""
           draggable={false}
-          onLoad={() => setIsLoaded(true)}
-          onError={() => setIsLoaded(true)}
+          onLoad={markLoaded}
+          onError={markLoaded}
         />
       )}
 

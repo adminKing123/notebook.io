@@ -10,7 +10,7 @@ export const SIGN_UP_STEP_LABELS = ['Profile', 'Password', 'Verify'];
 
 export const INITIAL_SIGN_UP_FORM = {
   fullName: '',
-  age: '',
+  dateOfBirth: '',
   email: '',
   password: '',
   confirmPassword: '',

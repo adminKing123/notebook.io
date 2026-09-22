@@ -6,6 +6,7 @@ import { useAuthFormMessages } from '../../../components/auth/shared/hooks/useAu
 import { useStepForm } from '../../../components/auth/shared/hooks/useStepForm';
 import { validateOtp, validatePassword } from '../../../components/auth/shared/validators';
 import { ROUTES } from '../../../routes';
+import { validateDateOfBirth } from '../../../utils/date';
 import {
   INITIAL_SIGN_UP_FORM,
   SIGN_UP_STEP_COUNT,
@@ -17,13 +18,9 @@ function validateProfile(formData) {
     return 'Full name is required.';
   }
 
-  if (!formData.age) {
-    return 'Age is required.';
-  }
-
-  const age = Number(formData.age);
-  if (Number.isNaN(age) || age < 1 || age > 120) {
-    return 'Age must be between 1 and 120.';
+  const dateOfBirthError = validateDateOfBirth(formData.dateOfBirth);
+  if (dateOfBirthError) {
+    return dateOfBirthError;
   }
 
   if (!formData.email.trim()) {

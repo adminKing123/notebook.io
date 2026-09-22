@@ -1,5 +1,6 @@
 import AuthForm from '../../shared/AuthForm';
 import AuthFormMessage from '../../shared/AuthFormMessage';
+import DateField from '../../../ui/DateField';
 import FormActions from '../../../ui/FormActions';
 import TextField from '../../../ui/TextField';
 
@@ -22,15 +23,11 @@ export default function ProfileStep({
         autoComplete="name"
       />
 
-      <TextField
-        id="age"
-        label="Age"
-        type="number"
-        value={formData.age}
-        onChange={(event) => updateField('age', event.target.value)}
-        placeholder="Enter your age"
-        min={1}
-        max={120}
+      <DateField
+        id="dateOfBirth"
+        label="Date of Birth"
+        value={formData.dateOfBirth}
+        onChange={(event) => updateField('dateOfBirth', event.target.value)}
       />
 
       <TextField

@@ -6,7 +6,7 @@ export function signUp(payload) {
     skipAuth: true,
     body: JSON.stringify({
       full_name: payload.fullName,
-      age: Number(payload.age),
+      date_of_birth: payload.dateOfBirth,
       email: payload.email,
       password: payload.password,
       confirm_password: payload.confirmPassword,
