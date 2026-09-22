@@ -67,8 +67,13 @@
 }
 
 .notebook-card--create {
+  padding: 0;
   border-style: dashed;
   background-color: rgba(255, 255, 255, 0.42);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .notebook-card--create:hover {
@@ -119,11 +124,8 @@
   height: 1.5rem;
 }
 
-.notebook-card-info {
-  flex-shrink: 0;
-}
-
 .notebook-card-info__trigger {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;

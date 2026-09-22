@@ -1,10 +1,10 @@
+import { formatPageCount } from '../../utils/notebookDisplay';
 import NotebookAccessBadge from './NotebookAccessBadge';
+import NotebookCardFooter from './NotebookCardFooter';
 import NotebookCardInfo from './NotebookCardInfo';
 import NotebookCardThumbnail from './NotebookCardThumbnail';
 
 export default function NotebookCard({ notebook }) {
-  const pageLabel = notebook.pageCount === 1 ? '1 page' : `${notebook.pageCount} pages`;
-
   return (
     <div className="notebook-card">
       <button type="button" className="notebook-card__main">
@@ -20,10 +20,10 @@ export default function NotebookCard({ notebook }) {
         </div>
       </button>
 
-      <div className="notebook-card__footer">
-        <p className="notebook-card__page-count">{pageLabel}</p>
-        <NotebookCardInfo notebook={notebook} />
-      </div>
+      <NotebookCardFooter
+        label={formatPageCount(notebook.pageCount)}
+        action={<NotebookCardInfo notebook={notebook} />}
+      />
     </div>
   );
 }

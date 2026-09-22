@@ -3,6 +3,12 @@ export const NOTEBOOKS_SECTION = {
   description: 'Jump back into a recent notebook or create a new one.',
 };
 
+export const CREATE_NOTEBOOK_CARD = {
+  title: 'Create New Notebook',
+  description: 'Start a fresh notebook for your thoughts and ideas.',
+  footerLabel: 'New',
+};
+
 export const NOTEBOOK_ACCESS = {
   PUBLIC: 'public',
   PRIVATE: 'private',
@@ -14,6 +20,12 @@ export const NOTEBOOK_ACCESS_LABELS = {
   [NOTEBOOK_ACCESS.PRIVATE]: 'Private',
   [NOTEBOOK_ACCESS.SHARED]: 'Shared',
 };
+
+export const NOTEBOOK_INFO_FIELDS = [
+  { id: 'created', label: 'Created', key: 'createdAt', type: 'datetime' },
+  { id: 'updated', label: 'Last updated', key: 'lastUpdatedAt', type: 'datetime' },
+  { id: 'owner', label: 'Owned by', key: 'ownedBy', type: 'text' },
+];
 
 export const RECENT_NOTEBOOKS = [
   {

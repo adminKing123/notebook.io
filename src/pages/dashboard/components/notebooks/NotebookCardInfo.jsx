@@ -1,6 +1,17 @@
 import { MdInfoOutline } from 'react-icons/md';
 import Tooltip from '../../../../components/ui/Tooltip';
-import { formatNotebookDateTime } from '../../utils/formatNotebookDateTime';
+import { NOTEBOOK_INFO_FIELDS } from '../../constants';
+import { formatNotebookDateTime } from '../../utils/notebookDisplay';
+
+function getInfoFieldValue(notebook, field) {
+  const value = notebook[field.key];
+
+  if (field.type === 'datetime') {
+    return formatNotebookDateTime(value);
+  }
+
+  return value;
+}
 
 function NotebookCardInfoContent({ notebook }) {
   const fullDescription = notebook.fullDescription ?? notebook.description;
@@ -8,18 +19,12 @@ function NotebookCardInfoContent({ notebook }) {
   return (
     <>
       <dl className="notebook-card-info__details">
-        <div className="notebook-card-info__detail">
-          <dt>Created</dt>
-          <dd>{formatNotebookDateTime(notebook.createdAt)}</dd>
-        </div>
-        <div className="notebook-card-info__detail">
-          <dt>Last updated</dt>
-          <dd>{formatNotebookDateTime(notebook.lastUpdatedAt)}</dd>
-        </div>
-        <div className="notebook-card-info__detail">
-          <dt>Owned by</dt>
-          <dd>{notebook.ownedBy}</dd>
-        </div>
+        {NOTEBOOK_INFO_FIELDS.map((field) => (
+          <div key={field.id} className="notebook-card-info__detail">
+            <dt>{field.label}</dt>
+            <dd>{getInfoFieldValue(notebook, field)}</dd>
+          </div>
+        ))}
       </dl>
 
       <div className="notebook-card-info__description">
@@ -32,22 +37,19 @@ function NotebookCardInfoContent({ notebook }) {
 
 export default function NotebookCardInfo({ notebook }) {
   return (
-    <div className="notebook-card-info">
-      <Tooltip
-        content={<NotebookCardInfoContent notebook={notebook} />}
-        contentClassName="notebook-card-info__tooltip"
-        side="top"
-        align="end"
+    <Tooltip
+      content={<NotebookCardInfoContent notebook={notebook} />}
+      contentClassName="notebook-card-info__tooltip"
+      side="top"
+      align="end"
+    >
+      <button
+        type="button"
+        className="notebook-card-info__trigger"
+        aria-label={`More details about ${notebook.title}`}
       >
-        <button
-          type="button"
-          className="notebook-card-info__trigger"
-          aria-label={`More details about ${notebook.title}`}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <MdInfoOutline aria-hidden="true" />
-        </button>
-      </Tooltip>
-    </div>
+        <MdInfoOutline aria-hidden="true" />
+      </button>
+    </Tooltip>
   );
 }
