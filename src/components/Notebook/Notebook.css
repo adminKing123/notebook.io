@@ -7,7 +7,8 @@
 
 .notebook__zoom-shell {
   width: 100%;
-  overflow: auto;
+  overflow: hidden;
+  transition: height 0.15s ease;
 }
 
 .notebook__zoom-content {

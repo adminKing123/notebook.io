@@ -7,6 +7,7 @@ import {
 } from '../NotebookPage/utils/loadImageFromFile';
 import NotebookConfigPanel from './NotebookConfigPanel';
 import { useNotebookPageTransition } from './hooks/useNotebookPageTransition';
+import { useZoomContentHeight } from './hooks/useZoomContentHeight';
 import { createPageId, normalizePages } from './utils/normalizePages';
 import './Notebook.css';
 
@@ -46,7 +47,9 @@ export default function Notebook({ pages: initialPages = [{}] }) {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
 
   const viewportRef = useRef(null);
+  const zoomContentRef = useRef(null);
   const pageRefs = useRef([]);
+  const contentHeight = useZoomContentHeight(zoomContentRef);
 
   const totalPages = pages.length;
   const currentPage = currentPageIndex + 1;
@@ -252,8 +255,16 @@ export default function Notebook({ pages: initialPages = [{}] }) {
 
   return (
     <div className="notebook">
-      <div className="notebook__zoom-shell">
+      <div
+        className="notebook__zoom-shell"
+        style={
+          contentHeight > 0
+            ? { height: contentHeight * zoom }
+            : undefined
+        }
+      >
         <div
+          ref={zoomContentRef}
           className="notebook__zoom-content"
           style={{
             transform: `scale(${zoom})`,
