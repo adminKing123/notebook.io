@@ -1,0 +1,8 @@
+export const LINE_CHAR_ALLOWED = 45;
+export const CONTENT_LINE_COUNT = 32;
+export const HEADER_LINE_COUNT = 2;
+export const TOTAL_LINES = HEADER_LINE_COUNT + CONTENT_LINE_COUNT;
+
+export const TITLE_LINE_INDEX = 0;
+export const SUBTITLE_LINE_INDEX = 1;
+export const CONTENT_LINE_START = HEADER_LINE_COUNT;

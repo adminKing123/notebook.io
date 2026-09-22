@@ -1,0 +1,115 @@
+.notebook-page {
+  width: 100%;
+}
+
+.notebook-page__sheet {
+  --notebook-page-font-size: 16px;
+  --notebook-page-line-height: 28px;
+
+  background-color: #fdfbf7;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.notebook-page__margin-line-1 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 8%;
+  width: 2px;
+  background-color: rgba(248, 113, 113, 0.6);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.notebook-page__margin-line-2 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 8.5%;
+  width: 1px;
+  background-color: rgba(248, 113, 113, 0.3);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.notebook-page__header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.notebook-page__header-divider {
+  width: 100%;
+  height: 2px;
+  background-color: rgba(248, 113, 113, 0.6);
+  flex-shrink: 0;
+}
+
+.notebook-page__lines {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-bottom: 2rem;
+}
+
+.notebook-page__row {
+  border-bottom: 1px solid rgba(147, 197, 253, 0.7);
+  position: relative;
+  padding-left: 10%;
+  padding-right: 4%;
+  display: flex;
+  align-items: flex-end;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.notebook-page__row:focus-within {
+  background-color: rgba(241, 245, 249, 0.4);
+  border-bottom-color: rgba(96, 165, 250, 1);
+}
+
+.notebook-page__input {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 500;
+  font-size: var(--notebook-page-font-size);
+  height: var(--notebook-page-line-height);
+  line-height: var(--notebook-page-line-height);
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #334155;
+  padding: 0;
+  margin: 0;
+}
+
+.notebook-page__input::selection {
+  background-color: rgba(147, 197, 253, 0.4);
+}
+
+.notebook-page__row--title,
+.notebook-page__row--subtitle {
+  border-bottom: none;
+}
+
+.notebook-page__row--title:focus-within,
+.notebook-page__row--subtitle:focus-within {
+  border-bottom-color: transparent;
+}
+
+.notebook-page__row--title .notebook-page__input {
+  color: #1e293b;
+}
+
+.notebook-page__row--title .notebook-page__input::placeholder {
+  color: #94a3b8;
+}
+
+.notebook-page__row--subtitle .notebook-page__input {
+  color: #64748b;
+}
+
+.notebook-page__row--subtitle .notebook-page__input::placeholder {
+  color: #94a3b8;
+}
