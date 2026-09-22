@@ -3,6 +3,7 @@ import { AuthProvider } from './auth/AuthContext';
 import AuthRoute from './components/auth/AuthRoute';
 import CreateNotebookPage from './pages/create-notebook/CreateNotebookPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
+import NotebookPage from './pages/notebook/NotebookPage';
 import ForgotPasswordPage from './pages/forgot-password/ForgotPasswordPage';
 import LoginPage from './pages/login/LoginPage';
 import SignUpPage from './pages/sign-up/SignUpPage';
@@ -52,6 +53,14 @@ export default function App() {
               element={
                 <AuthRoute requireAuth>
                   <CreateNotebookPage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path={ROUTES.NOTEBOOK}
+              element={
+                <AuthRoute requireAuth>
+                  <NotebookPage />
                 </AuthRoute>
               }
             />

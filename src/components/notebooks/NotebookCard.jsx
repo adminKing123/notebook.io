@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { notebookRoute } from '../../routes';
 import { formatPageCount } from '../../utils/notebookDisplay';
 import NotebookAccessBadge from './NotebookAccessBadge';
 import NotebookCardFooter from './NotebookCardFooter';
@@ -7,7 +9,7 @@ import NotebookCardThumbnail from './NotebookCardThumbnail';
 export default function NotebookCard({ notebook }) {
   return (
     <div className="notebook-card">
-      <button type="button" className="notebook-card__main">
+      <Link to={notebookRoute(notebook.id)} className="notebook-card__main">
         <NotebookCardThumbnail imageSrc={notebook.thumbnailUrl} />
 
         <div className="notebook-card__body">
@@ -18,7 +20,7 @@ export default function NotebookCard({ notebook }) {
 
           <p className="notebook-card__description">{notebook.description}</p>
         </div>
-      </button>
+      </Link>
 
       <NotebookCardFooter
         label={formatPageCount(notebook.pageCount)}
