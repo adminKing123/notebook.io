@@ -37,3 +37,55 @@ class Notebook(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class NotebookPage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    notebook = models.ForeignKey(
+        Notebook,
+        on_delete=models.CASCADE,
+        related_name='pages',
+    )
+    page_number = models.PositiveIntegerField()
+    heading = models.CharField(max_length=255, blank=True)
+    subheading = models.CharField(max_length=255, blank=True)
+    content = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['page_number']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['notebook', 'page_number'],
+                name='unique_notebook_page_number',
+            ),
+        ]
+        indexes = [
+            models.Index(fields=['notebook', 'page_number']),
+        ]
+
+    def __str__(self):
+        return f'{self.notebook.title} · page {self.page_number}'
+
+
+class NotebookPageImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    page = models.ForeignKey(
+        NotebookPage,
+        on_delete=models.CASCADE,
+        related_name='images',
+    )
+    url = models.URLField()
+    x = models.FloatField(default=0)
+    y = models.FloatField(default=0)
+    width = models.FloatField(default=30)
+    aspect_ratio = models.FloatField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'Image {self.id} on page {self.page.page_number}'

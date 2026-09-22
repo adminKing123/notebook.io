@@ -1,6 +1,56 @@
 from rest_framework import serializers
 
-from notebooks.models import Notebook, NotebookAccess
+from notebooks.constants import MAX_CONTENT_LINES, MAX_LINE_LENGTH
+from notebooks.models import Notebook, NotebookAccess, NotebookPage, NotebookPageImage
+
+
+class NotebookPageImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NotebookPageImage
+        fields = ['id', 'url', 'x', 'y', 'width', 'aspect_ratio']
+
+
+class NotebookPageImageWriteSerializer(serializers.Serializer):
+    id = serializers.UUIDField(required=False)
+    url = serializers.URLField(required=False, allow_blank=True)
+    x = serializers.FloatField(required=False)
+    y = serializers.FloatField(required=False)
+    width = serializers.FloatField(required=False)
+    aspect_ratio = serializers.FloatField(required=False)
+
+
+class NotebookPageSerializer(serializers.ModelSerializer):
+    images = NotebookPageImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = NotebookPage
+        fields = [
+            'id',
+            'page_number',
+            'heading',
+            'subheading',
+            'content',
+            'images',
+            'updated_at',
+        ]
+
+
+class SaveNotebookPageSerializer(serializers.Serializer):
+    heading = serializers.CharField(required=False, allow_blank=True, max_length=255)
+    subheading = serializers.CharField(required=False, allow_blank=True, max_length=255)
+    content = serializers.ListField(
+        child=serializers.CharField(max_length=MAX_LINE_LENGTH, allow_blank=True),
+        required=False,
+        max_length=MAX_CONTENT_LINES,
+    )
+    images = NotebookPageImageWriteSerializer(many=True, required=False)
+
+
+class NotebookPageWindowSerializer(serializers.Serializer):
+    total_pages = serializers.IntegerField()
+    center_page = serializers.IntegerField()
+    window = serializers.DictField()
+    pages = NotebookPageSerializer(many=True)
 
 
 class NotebookSerializer(serializers.ModelSerializer):
