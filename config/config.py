@@ -1,5 +1,30 @@
 import os
 from dataclasses import dataclass
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
+
+
+def _parse_csv_env(name: str, default: str = '') -> list[str]:
+    return [item.strip() for item in os.getenv(name, default).split(',') if item.strip()]
+
+
+@dataclass(frozen=True)
+class AppSettings:
+    secret_key: str
+    debug: bool
+    allowed_hosts: list[str]
+    cors_allowed_origins: list[str]
+    smtp_host: str
+    smtp_port: int
+    smtp_user: str
+    smtp_app_password: str
+    default_from_email: str
+    otp_expiry_minutes: int
 
 
 @dataclass(frozen=True)
@@ -14,6 +39,26 @@ class CDNSettings:
     image_format: str
     image_max_width: int
     image_quality: int
+
+
+def load_app_settings() -> AppSettings:
+    smtp_user = os.getenv('SMTP_USER', '')
+
+    return AppSettings(
+        secret_key=os.getenv('SECRET_KEY', 'django-insecure-change-me'),
+        debug=os.getenv('DEBUG', 'True').lower() == 'true',
+        allowed_hosts=_parse_csv_env('ALLOWED_HOSTS', 'localhost,127.0.0.1'),
+        cors_allowed_origins=_parse_csv_env(
+            'CORS_ALLOWED_ORIGINS',
+            'http://localhost:5173,http://127.0.0.1:5173',
+        ),
+        smtp_host=os.getenv('SMTP_HOST', 'smtp.gmail.com'),
+        smtp_port=int(os.getenv('SMTP_PORT', '587')),
+        smtp_user=smtp_user,
+        smtp_app_password=os.getenv('SMTP_APP_PASSWORD', ''),
+        default_from_email=os.getenv('DEFAULT_FROM_EMAIL', smtp_user),
+        otp_expiry_minutes=int(os.getenv('OTP_EXPIRY_MINUTES', '10')),
+    )
 
 
 def load_cdn_settings() -> CDNSettings:

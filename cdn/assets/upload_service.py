@@ -3,7 +3,7 @@ from pathlib import PurePosixPath
 
 from cdn.assets.image_converter import normalize_image
 from cdn.base import CDNClient, StoredAsset
-from cdn.config import CDNSettings, load_cdn_settings
+from config.config import CDNSettings, load_cdn_settings
 from cdn.factory import get_cdn_client
 
 

@@ -5,7 +5,7 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 from cdn.base import CDNClient, StoredAsset
-from cdn.config import CDNSettings
+from config.config import CDNSettings
 from cdn.exceptions import CDNError
 
 

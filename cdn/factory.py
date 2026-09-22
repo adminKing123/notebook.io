@@ -1,6 +1,6 @@
 from cdn.backends.github import GitHubCDNBackend
 from cdn.base import CDNClient
-from cdn.config import CDNSettings, load_cdn_settings
+from config.config import CDNSettings, load_cdn_settings
 
 
 def get_cdn_client(settings: CDNSettings | None = None) -> CDNClient:

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from PIL import Image, UnidentifiedImageError
 
-from cdn.config import CDNSettings
+from config.config import CDNSettings
 
 
 @dataclass(frozen=True)

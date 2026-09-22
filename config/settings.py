@@ -1,20 +1,12 @@
-import os
 from datetime import timedelta
-from pathlib import Path
 
-from dotenv import load_dotenv
+from config.config import BASE_DIR, load_app_settings
 
-load_dotenv()
+app_settings = load_app_settings()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me')
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-    if host.strip()
-]
+SECRET_KEY = app_settings.secret_key
+DEBUG = app_settings.debug
+ALLOWED_HOSTS = app_settings.allowed_hosts
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -108,21 +100,15 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
 }
 
-CORS_ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv(
-        'CORS_ALLOWED_ORIGINS',
-        'http://localhost:5173,http://127.0.0.1:5173',
-    ).split(',')
-    if origin.strip()
-]
+CORS_ALLOWED_ORIGINS = app_settings.cors_allowed_origins
+CORS_ALLOW_CREDENTIALS = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('SMTP_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('SMTP_PORT', '587'))
-EMAIL_HOST_USER = os.getenv('SMTP_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('SMTP_APP_PASSWORD', '')
+EMAIL_HOST = app_settings.smtp_host
+EMAIL_PORT = app_settings.smtp_port
+EMAIL_HOST_USER = app_settings.smtp_user
+EMAIL_HOST_PASSWORD = app_settings.smtp_app_password
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = app_settings.default_from_email
 
-OTP_EXPIRY_MINUTES = int(os.getenv('OTP_EXPIRY_MINUTES', '10'))
+OTP_EXPIRY_MINUTES = app_settings.otp_expiry_minutes
