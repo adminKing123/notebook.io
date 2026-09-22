@@ -13,12 +13,13 @@ import AppLayout from '../../components/layout/AppLayout';
 import '../../components/auth/shared/auth.css';
 import '../../components/create-notebook/create-notebook.css';
 
-export default function CreateNewPage() {
+export default function CreateNotebookPage() {
   const {
     currentStep,
     formData,
     updateField,
     updateThumbnail,
+    isSubmitting,
     error,
     handleDetailsContinue,
     handleAccessContinue,
@@ -56,6 +57,7 @@ export default function CreateNewPage() {
             updateThumbnail={updateThumbnail}
             onBack={handleBack}
             onContinue={handleThumbnailContinue}
+            isSubmitting={isSubmitting}
             error={error}
           />
         );

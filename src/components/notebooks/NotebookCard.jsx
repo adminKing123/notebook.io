@@ -8,7 +8,7 @@ export default function NotebookCard({ notebook }) {
   return (
     <div className="notebook-card">
       <button type="button" className="notebook-card__main">
-        <NotebookCardThumbnail title={notebook.title} />
+        <NotebookCardThumbnail imageSrc={notebook.thumbnailUrl} />
 
         <div className="notebook-card__body">
           <div className="notebook-card__meta">

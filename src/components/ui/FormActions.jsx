@@ -1,4 +1,5 @@
 import Button from './Button';
+import Spinner from './Spinner';
 import './forms.css';
 
 export default function FormActions({
@@ -17,7 +18,7 @@ export default function FormActions({
         </Button>
       )}
       <Button type={continueType} onClick={onContinue} disabled={isSubmitting}>
-        {isSubmitting ? 'Please wait...' : continueLabel}
+        {isSubmitting ? <Spinner size="sm" label="Submitting form" /> : continueLabel}
       </Button>
     </div>
   );

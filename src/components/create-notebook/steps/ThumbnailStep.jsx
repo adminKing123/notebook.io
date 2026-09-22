@@ -10,6 +10,7 @@ export default function ThumbnailStep({
   updateThumbnail,
   onBack,
   onContinue,
+  isSubmitting = false,
   error = '',
 }) {
   const fileInputRef = useRef(null);
@@ -90,6 +91,7 @@ export default function ThumbnailStep({
         continueLabel="Create Notebook"
         continueType="submit"
         onContinue={onContinue}
+        isSubmitting={isSubmitting}
       />
     </AuthForm>
   );

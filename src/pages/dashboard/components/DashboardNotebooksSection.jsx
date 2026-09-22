@@ -1,8 +1,12 @@
+import Spinner from '../../../components/ui/Spinner';
 import NotebookCardsGrid from '../../../components/notebooks/NotebookCardsGrid';
-import { NOTEBOOKS_SECTION, RECENT_NOTEBOOKS } from '../constants';
+import { NOTEBOOKS_SECTION } from '../constants';
+import { useRecentNotebooks } from '../hooks/useRecentNotebooks';
 import './dashboard-notebooks.css';
 
 export default function DashboardNotebooksSection() {
+  const { notebooks, isLoading, error } = useRecentNotebooks();
+
   return (
     <section className="dashboard-notebooks">
       <div className="dashboard-notebooks__inner">
@@ -13,7 +17,22 @@ export default function DashboardNotebooksSection() {
           </p>
         </header>
 
-        <NotebookCardsGrid notebooks={RECENT_NOTEBOOKS} />
+        {isLoading && (
+          <Spinner
+            size="md"
+            centered
+            centerLayout="ui-spinner-center--section"
+            label="Loading recent notebooks"
+          />
+        )}
+
+        {!isLoading && error && (
+          <p className="dashboard-notebooks__status dashboard-notebooks__status--error">
+            {error}
+          </p>
+        )}
+
+        {!isLoading && !error && <NotebookCardsGrid notebooks={notebooks} />}
       </div>
     </section>
   );

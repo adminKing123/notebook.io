@@ -3,5 +3,5 @@ export const ROUTES = {
   SIGN_UP: '/sign-up',
   FORGOT_PASSWORD: '/forgot-password',
   DASHBOARD: '/dashboard',
-  CREATE_NEW_PAGE: '/create-new-page',
+  CREATE_NOTEBOOK: '/create-notebook',
 };

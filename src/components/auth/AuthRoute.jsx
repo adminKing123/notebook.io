@@ -6,7 +6,7 @@ export default function AuthRoute({ children, requireAuth }) {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <p className="route-loading">Loading...</p>;
+    return null;
   }
 
   if (requireAuth && !isAuthenticated) {

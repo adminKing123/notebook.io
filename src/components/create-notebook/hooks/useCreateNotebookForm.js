@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createNotebook } from '../../../api/notebooks';
 import { useAuthFormMessages } from '../../auth/shared/hooks/useAuthFormMessages';
 import { useStepForm } from '../../auth/shared/hooks/useStepForm';
 import { ROUTES } from '../../../routes';
@@ -17,14 +18,6 @@ function validateDetails(formData) {
   return '';
 }
 
-function validateAccess(formData) {
-  if (!formData.access) {
-    return 'Select an access mode for this notebook.';
-  }
-
-  return '';
-}
-
 export function useCreateNotebookForm() {
   const navigate = useNavigate();
   const stepForm = useStepForm({
@@ -32,7 +25,7 @@ export function useCreateNotebookForm() {
     stepCount: CREATE_NOTEBOOK_STEP_COUNT,
     initialStep: CREATE_NOTEBOOK_STEPS.DETAILS,
   });
-  const { error, setError, clearMessages } = useAuthFormMessages();
+  const { isSubmitting, setIsSubmitting, error, setError, clearMessages } = useAuthFormMessages();
 
   const updateThumbnail = useCallback(
     (file) => {
@@ -60,20 +53,27 @@ export function useCreateNotebookForm() {
 
   const handleAccessContinue = useCallback(() => {
     clearMessages();
-    const validationError = validateAccess(stepForm.formData);
-
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
     stepForm.goNext();
-  }, [clearMessages, setError, stepForm]);
+  }, [clearMessages, stepForm]);
 
-  const handleThumbnailContinue = useCallback(() => {
+  const handleThumbnailContinue = useCallback(async () => {
     clearMessages();
-    navigate(ROUTES.DASHBOARD);
-  }, [clearMessages, navigate]);
+    setIsSubmitting(true);
+
+    try {
+      await createNotebook({
+        title: stepForm.formData.title,
+        description: stepForm.formData.description,
+        access: stepForm.formData.access,
+        thumbnailFile: stepForm.formData.thumbnailFile,
+      });
+      navigate(ROUTES.DASHBOARD);
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [clearMessages, navigate, setError, setIsSubmitting, stepForm.formData]);
 
   const handleBack = useCallback(() => {
     clearMessages();
@@ -91,7 +91,7 @@ export function useCreateNotebookForm() {
     formData: stepForm.formData,
     updateField: stepForm.updateField,
     updateThumbnail,
-    isFirstStep: stepForm.isFirstStep,
+    isSubmitting,
     error,
     handleDetailsContinue,
     handleAccessContinue,

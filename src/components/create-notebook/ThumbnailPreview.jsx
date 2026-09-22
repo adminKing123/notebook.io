@@ -20,7 +20,7 @@ export default function ThumbnailPreview({ title, description, access, imageSrc 
             <span className="create-notebook-preview__thumbnail-label">{displayTitle}</span>
           </div>
         ) : (
-          <NotebookCardThumbnail title={displayTitle} />
+          <NotebookCardThumbnail />
         )}
 
         <div className="create-notebook-preview__body">

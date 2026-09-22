@@ -6,7 +6,7 @@ import NotebookCardFooter from './NotebookCardFooter';
 
 export default function CreateNotebookCard() {
   return (
-    <Link to={ROUTES.CREATE_NEW_PAGE} className="notebook-card notebook-card--create">
+    <Link to={ROUTES.CREATE_NOTEBOOK} className="notebook-card notebook-card--create">
       <div className="notebook-card__thumbnail">
         <div className="notebook-card__thumbnail-sheet notebook-card__thumbnail-sheet--create">
           <span className="notebook-card__create-icon" aria-hidden="true">

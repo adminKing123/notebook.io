@@ -1,4 +1,4 @@
-import { NOTEBOOK_ACCESS } from '../notebooks/constants';
+import { NOTEBOOK_ACCESS, NOTEBOOK_ACCESS_LABELS } from '../notebooks/constants';
 
 export const CREATE_NOTEBOOK_STEPS = {
   DETAILS: 0,
@@ -21,17 +21,17 @@ export const INITIAL_CREATE_NOTEBOOK_FORM = {
 export const NOTEBOOK_ACCESS_OPTIONS = [
   {
     value: NOTEBOOK_ACCESS.PRIVATE,
-    label: 'Private',
+    label: NOTEBOOK_ACCESS_LABELS[NOTEBOOK_ACCESS.PRIVATE],
     description: 'Only you can view and edit this notebook.',
   },
   {
     value: NOTEBOOK_ACCESS.PUBLIC,
-    label: 'Public',
+    label: NOTEBOOK_ACCESS_LABELS[NOTEBOOK_ACCESS.PUBLIC],
     description: 'Anyone can view this notebook. Only you can edit it.',
   },
   {
     value: NOTEBOOK_ACCESS.SHARED,
-    label: 'Shared',
+    label: NOTEBOOK_ACCESS_LABELS[NOTEBOOK_ACCESS.SHARED],
     description: 'Invite specific people to view or collaborate.',
   },
 ];

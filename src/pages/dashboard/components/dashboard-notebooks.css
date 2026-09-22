@@ -28,6 +28,18 @@
   line-height: 1.55;
 }
 
+.dashboard-notebooks__status {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.dashboard-notebooks__status--error {
+  color: #b91c1c;
+}
+
 @media (max-width: 640px) {
   .dashboard-notebooks {
     padding-top: 1.5rem;

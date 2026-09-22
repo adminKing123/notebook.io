@@ -12,8 +12,9 @@ class ApiError extends Error {
 
 export async function apiRequest(path, options = {}) {
   const { skipAuth = false, headers: customHeaders, ...fetchOptions } = options;
+  const isFormData = fetchOptions.body instanceof FormData;
   const headers = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(customHeaders ?? {}),
   };
 
