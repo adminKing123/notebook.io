@@ -1,5 +1,6 @@
-import { NOTEBOOKS_SECTION } from '../constants';
-import NotebookCardsGrid from './notebooks/NotebookCardsGrid';
+import NotebookCardsGrid from '../../../components/notebooks/NotebookCardsGrid';
+import { NOTEBOOKS_SECTION, RECENT_NOTEBOOKS } from '../constants';
+import './dashboard-notebooks.css';
 
 export default function DashboardNotebooksSection() {
   return (
@@ -12,7 +13,7 @@ export default function DashboardNotebooksSection() {
           </p>
         </header>
 
-        <NotebookCardsGrid />
+        <NotebookCardsGrid notebooks={RECENT_NOTEBOOKS} />
       </div>
     </section>
   );

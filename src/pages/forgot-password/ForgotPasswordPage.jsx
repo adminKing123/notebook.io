@@ -1,30 +1,16 @@
-import AuthFooter from '../components/auth/shared/AuthFooter';
-import AuthLayout from '../components/auth/shared/AuthLayout';
-import AuthPasswordStep from '../components/auth/shared/steps/AuthPasswordStep';
-import OtpVerificationStep from '../components/auth/shared/steps/OtpVerificationStep';
+import AuthFooter from '../../components/auth/shared/AuthFooter';
+import AuthLayout from '../../components/auth/shared/AuthLayout';
+import AuthPasswordStep from '../../components/auth/shared/steps/AuthPasswordStep';
+import OtpVerificationStep from '../../components/auth/shared/steps/OtpVerificationStep';
+import EmailStep from '../../components/auth/forgot-password/steps/EmailStep';
+import { ROUTES } from '../../routes';
 import {
+  FORGOT_PASSWORD_STEP_CONTENT,
   FORGOT_PASSWORD_STEP_COUNT,
   FORGOT_PASSWORD_STEP_LABELS,
   FORGOT_PASSWORD_STEPS,
-} from './forgot-password/constants';
-import { useForgotPasswordForm } from './forgot-password/hooks/useForgotPasswordForm';
-import EmailStep from './forgot-password/steps/EmailStep';
-import { ROUTES } from '../routes';
-
-const STEP_CONTENT = {
-  [FORGOT_PASSWORD_STEPS.EMAIL]: {
-    title: 'Reset your password',
-    description: 'Enter the email address linked to your account.',
-  },
-  [FORGOT_PASSWORD_STEPS.OTP]: {
-    title: 'Verify your email',
-    description: 'Enter the code we sent to verify it is really you.',
-  },
-  [FORGOT_PASSWORD_STEPS.PASSWORD]: {
-    title: 'Create a new password',
-    description: 'Choose a new password for your account.',
-  },
-};
+} from './constants';
+import { useForgotPasswordForm } from './hooks/useForgotPasswordForm';
 
 export default function ForgotPasswordPage() {
   const {
@@ -42,7 +28,7 @@ export default function ForgotPasswordPage() {
     handleBack,
   } = useForgotPasswordForm();
 
-  const { title, description } = STEP_CONTENT[currentStep];
+  const { title, description } = FORGOT_PASSWORD_STEP_CONTENT[currentStep];
 
   const renderStep = () => {
     switch (currentStep) {

@@ -1,6 +1,6 @@
 import { MdInfoOutline } from 'react-icons/md';
-import Tooltip from '../../../../components/ui/Tooltip';
-import { NOTEBOOK_INFO_FIELDS } from '../../constants';
+import Tooltip from '../ui/Tooltip';
+import { NOTEBOOK_INFO_FIELDS } from './constants';
 import { formatNotebookDateTime } from '../../utils/notebookDisplay';
 
 function getInfoFieldValue(notebook, field) {

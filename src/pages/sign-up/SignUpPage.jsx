@@ -1,30 +1,16 @@
-import AuthFooter from '../components/auth/shared/AuthFooter';
-import AuthLayout from '../components/auth/shared/AuthLayout';
-import AuthPasswordStep from '../components/auth/shared/steps/AuthPasswordStep';
-import OtpVerificationStep from '../components/auth/shared/steps/OtpVerificationStep';
+import AuthFooter from '../../components/auth/shared/AuthFooter';
+import AuthLayout from '../../components/auth/shared/AuthLayout';
+import AuthPasswordStep from '../../components/auth/shared/steps/AuthPasswordStep';
+import OtpVerificationStep from '../../components/auth/shared/steps/OtpVerificationStep';
+import ProfileStep from '../../components/auth/sign-up/steps/ProfileStep';
+import { ROUTES } from '../../routes';
 import {
+  SIGN_UP_STEP_CONTENT,
   SIGN_UP_STEP_COUNT,
   SIGN_UP_STEP_LABELS,
   SIGN_UP_STEPS,
-} from './sign-up/constants';
-import { useSignUpForm } from './sign-up/hooks/useSignUpForm';
-import ProfileStep from './sign-up/steps/ProfileStep';
-import { ROUTES } from '../routes';
-
-const STEP_CONTENT = {
-  [SIGN_UP_STEPS.PROFILE]: {
-    title: 'Create your account',
-    description: 'Tell us a little about yourself to get started.',
-  },
-  [SIGN_UP_STEPS.PASSWORD]: {
-    title: 'Secure your account',
-    description: 'Choose a strong password to protect your diary.',
-  },
-  [SIGN_UP_STEPS.OTP]: {
-    title: 'Verify your email',
-    description: 'Enter the code we sent to confirm your email address.',
-  },
-};
+} from './constants';
+import { useSignUpForm } from './hooks/useSignUpForm';
 
 export default function SignUpPage() {
   const {
@@ -42,7 +28,7 @@ export default function SignUpPage() {
     handleBack,
   } = useSignUpForm();
 
-  const { title, description } = STEP_CONTENT[currentStep];
+  const { title, description } = SIGN_UP_STEP_CONTENT[currentStep];
 
   const renderStep = () => {
     switch (currentStep) {

@@ -1,7 +1,7 @@
-import AuthForm from '../../../components/auth/shared/AuthForm';
-import AuthFormMessage from '../../../components/auth/shared/AuthFormMessage';
-import FormActions from '../../../components/ui/FormActions';
-import TextField from '../../../components/ui/TextField';
+import AuthForm from '../../shared/AuthForm';
+import AuthFormMessage from '../../shared/AuthFormMessage';
+import FormActions from '../../../ui/FormActions';
+import TextField from '../../../ui/TextField';
 
 export default function ProfileStep({
   formData,

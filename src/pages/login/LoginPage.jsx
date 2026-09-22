@@ -1,13 +1,13 @@
-import AuthFooter from '../components/auth/shared/AuthFooter';
-import AuthForm from '../components/auth/shared/AuthForm';
-import AuthFormMessage from '../components/auth/shared/AuthFormMessage';
-import AuthInlineLink from '../components/auth/shared/AuthInlineLink';
-import AuthLayout from '../components/auth/shared/AuthLayout';
-import FormActions from '../components/ui/FormActions';
-import PasswordField from '../components/ui/PasswordField';
-import TextField from '../components/ui/TextField';
-import { ROUTES } from '../routes';
-import { useLoginForm } from './login/hooks/useLoginForm';
+import AuthFooter from '../../components/auth/shared/AuthFooter';
+import AuthForm from '../../components/auth/shared/AuthForm';
+import AuthFormMessage from '../../components/auth/shared/AuthFormMessage';
+import AuthInlineLink from '../../components/auth/shared/AuthInlineLink';
+import AuthLayout from '../../components/auth/shared/AuthLayout';
+import FormActions from '../../components/ui/FormActions';
+import PasswordField from '../../components/ui/PasswordField';
+import TextField from '../../components/ui/TextField';
+import { ROUTES } from '../../routes';
+import { useLoginForm } from './hooks/useLoginForm';
 
 export default function LoginPage() {
   const { formData, updateField, handleSubmit, isSubmitting, error } = useLoginForm();

@@ -1,4 +1,4 @@
-import { NOTEBOOK_ACCESS_LABELS } from '../../constants';
+import { NOTEBOOK_ACCESS_LABELS } from './constants';
 
 export default function NotebookAccessBadge({ access }) {
   return (

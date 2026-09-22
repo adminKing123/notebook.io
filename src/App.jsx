@@ -1,10 +1,11 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import AuthRoute from './components/auth/AuthRoute';
+import CreateNewPage from './pages/create-new-page/CreateNewPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
+import ForgotPasswordPage from './pages/forgot-password/ForgotPasswordPage';
+import LoginPage from './pages/login/LoginPage';
+import SignUpPage from './pages/sign-up/SignUpPage';
 import { ROUTES } from './routes';
 import './App.css';
 
@@ -43,6 +44,14 @@ export default function App() {
               element={
                 <AuthRoute requireAuth>
                   <DashboardPage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path={ROUTES.CREATE_NEW_PAGE}
+              element={
+                <AuthRoute requireAuth>
+                  <CreateNewPage />
                 </AuthRoute>
               }
             />

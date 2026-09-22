@@ -1,10 +1,12 @@
+import { Link } from 'react-router-dom';
 import { MdAdd } from 'react-icons/md';
-import { CREATE_NOTEBOOK_CARD } from '../../constants';
+import { ROUTES } from '../../routes';
+import { CREATE_NOTEBOOK_CARD } from './constants';
 import NotebookCardFooter from './NotebookCardFooter';
 
 export default function CreateNotebookCard() {
   return (
-    <button type="button" className="notebook-card notebook-card--create">
+    <Link to={ROUTES.CREATE_NEW_PAGE} className="notebook-card notebook-card--create">
       <div className="notebook-card__thumbnail">
         <div className="notebook-card__thumbnail-sheet notebook-card__thumbnail-sheet--create">
           <span className="notebook-card__create-icon" aria-hidden="true">
@@ -23,6 +25,6 @@ export default function CreateNotebookCard() {
       </div>
 
       <NotebookCardFooter label={CREATE_NOTEBOOK_CARD.footerLabel} muted />
-    </button>
+    </Link>
   );
 }
