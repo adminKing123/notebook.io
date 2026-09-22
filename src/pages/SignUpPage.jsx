@@ -1,14 +1,13 @@
 import AuthFooter from '../components/auth/shared/AuthFooter';
-import AuthFormMessage from '../components/auth/shared/AuthFormMessage';
 import AuthLayout from '../components/auth/shared/AuthLayout';
+import AuthPasswordStep from '../components/auth/shared/steps/AuthPasswordStep';
+import OtpVerificationStep from '../components/auth/shared/steps/OtpVerificationStep';
 import {
   SIGN_UP_STEP_COUNT,
   SIGN_UP_STEP_LABELS,
   SIGN_UP_STEPS,
 } from './sign-up/constants';
 import { useSignUpForm } from './sign-up/hooks/useSignUpForm';
-import OtpVerificationStep from './sign-up/steps/OtpVerificationStep';
-import PasswordStep from './sign-up/steps/PasswordStep';
 import ProfileStep from './sign-up/steps/ProfileStep';
 import { ROUTES } from '../routes';
 
@@ -59,13 +58,15 @@ export default function SignUpPage() {
         );
       case SIGN_UP_STEPS.PASSWORD:
         return (
-          <PasswordStep
+          <AuthPasswordStep
             formData={formData}
             updateField={updateField}
             onBack={handleBack}
             onContinue={handlePasswordContinue}
             isSubmitting={isSubmitting}
             error={error}
+            passwordPlaceholder="Create a password"
+            confirmPlaceholder="Re-enter your password"
           />
         );
       case SIGN_UP_STEPS.OTP:
@@ -80,6 +81,7 @@ export default function SignUpPage() {
             isSubmitting={isSubmitting}
             error={error}
             successMessage={successMessage}
+            continueLabel="Verify Email"
           />
         );
       default:

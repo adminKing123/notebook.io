@@ -1,5 +1,7 @@
 import AuthFooter from '../components/auth/shared/AuthFooter';
 import AuthLayout from '../components/auth/shared/AuthLayout';
+import AuthPasswordStep from '../components/auth/shared/steps/AuthPasswordStep';
+import OtpVerificationStep from '../components/auth/shared/steps/OtpVerificationStep';
 import {
   FORGOT_PASSWORD_STEP_COUNT,
   FORGOT_PASSWORD_STEP_LABELS,
@@ -7,8 +9,6 @@ import {
 } from './forgot-password/constants';
 import { useForgotPasswordForm } from './forgot-password/hooks/useForgotPasswordForm';
 import EmailStep from './forgot-password/steps/EmailStep';
-import OtpStep from './forgot-password/steps/OtpStep';
-import ResetPasswordStep from './forgot-password/steps/ResetPasswordStep';
 import { ROUTES } from '../routes';
 
 const STEP_CONTENT = {
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
         );
       case FORGOT_PASSWORD_STEPS.OTP:
         return (
-          <OtpStep
+          <OtpVerificationStep
             email={formData.email}
             otp={formData.otp}
             onOtpChange={(value) => updateField('otp', value)}
@@ -72,13 +72,20 @@ export default function ForgotPasswordPage() {
         );
       case FORGOT_PASSWORD_STEPS.PASSWORD:
         return (
-          <ResetPasswordStep
+          <AuthPasswordStep
             formData={formData}
             updateField={updateField}
             onBack={handleBack}
             onContinue={handlePasswordContinue}
             isSubmitting={isSubmitting}
             error={error}
+            passwordLabel="New Password"
+            confirmLabel="Confirm New Password"
+            passwordPlaceholder="Enter a new password"
+            confirmPlaceholder="Re-enter your new password"
+            continueLabel="Update Password"
+            passwordId="newPassword"
+            confirmId="confirmNewPassword"
           />
         );
       default:

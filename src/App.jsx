@@ -1,7 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
-import GuestRoute from './components/auth/GuestRoute';
-import ProtectedRoute from './components/auth/ProtectedRoute';
+import AuthRoute from './components/auth/AuthRoute';
 import DashboardPage from './pages/DashboardPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LoginPage from './pages/LoginPage';
@@ -18,33 +17,33 @@ export default function App() {
             <Route
               path={ROUTES.LOGIN}
               element={
-                <GuestRoute>
+                <AuthRoute requireAuth={false}>
                   <LoginPage />
-                </GuestRoute>
+                </AuthRoute>
               }
             />
             <Route
               path={ROUTES.SIGN_UP}
               element={
-                <GuestRoute>
+                <AuthRoute requireAuth={false}>
                   <SignUpPage />
-                </GuestRoute>
+                </AuthRoute>
               }
             />
             <Route
               path={ROUTES.FORGOT_PASSWORD}
               element={
-                <GuestRoute>
+                <AuthRoute requireAuth={false}>
                   <ForgotPasswordPage />
-                </GuestRoute>
+                </AuthRoute>
               }
             />
             <Route
               path={ROUTES.DASHBOARD}
               element={
-                <ProtectedRoute>
+                <AuthRoute requireAuth>
                   <DashboardPage />
-                </ProtectedRoute>
+                </AuthRoute>
               }
             />
             <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />

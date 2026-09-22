@@ -1,7 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { resendSignUpOtp, signUp, verifySignUp } from '../../../api/auth';
+import { OTP_RESENT_MESSAGE } from '../../../components/auth/shared/constants';
+import { useAuthFormMessages } from '../../../components/auth/shared/hooks/useAuthFormMessages';
 import { useStepForm } from '../../../components/auth/shared/hooks/useStepForm';
+import { validateOtp, validatePassword } from '../../../components/auth/shared/validators';
 import { ROUTES } from '../../../routes';
 import {
   INITIAL_SIGN_UP_FORM,
@@ -30,30 +33,6 @@ function validateProfile(formData) {
   return '';
 }
 
-function validatePassword(formData) {
-  if (!formData.password) {
-    return 'Password is required.';
-  }
-
-  if (formData.password.length < 8) {
-    return 'Password must be at least 8 characters.';
-  }
-
-  if (formData.password !== formData.confirmPassword) {
-    return 'Passwords do not match.';
-  }
-
-  return '';
-}
-
-function validateOtp(formData) {
-  if (!/^\d{6}$/.test(formData.otp)) {
-    return 'Enter the 6-digit verification code.';
-  }
-
-  return '';
-}
-
 export function useSignUpForm() {
   const navigate = useNavigate();
   const stepForm = useStepForm({
@@ -61,15 +40,15 @@ export function useSignUpForm() {
     stepCount: SIGN_UP_STEP_COUNT,
     initialStep: SIGN_UP_STEPS.PROFILE,
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  const clearMessages = useCallback(() => {
-    setError('');
-    setSuccessMessage('');
-  }, []);
+  const {
+    isSubmitting,
+    setIsSubmitting,
+    error,
+    setError,
+    successMessage,
+    setSuccessMessage,
+    clearMessages,
+  } = useAuthFormMessages();
 
   const handleProfileContinue = useCallback(() => {
     clearMessages();
@@ -81,7 +60,7 @@ export function useSignUpForm() {
     }
 
     stepForm.goNext();
-  }, [clearMessages, stepForm]);
+  }, [clearMessages, setError, stepForm]);
 
   const handlePasswordContinue = useCallback(async () => {
     clearMessages();
@@ -102,7 +81,7 @@ export function useSignUpForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, stepForm]);
+  }, [clearMessages, setError, setIsSubmitting, stepForm]);
 
   const handleOtpContinue = useCallback(async () => {
     clearMessages();
@@ -126,7 +105,7 @@ export function useSignUpForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, navigate, stepForm.formData.email, stepForm.formData.otp]);
+  }, [clearMessages, navigate, setError, setIsSubmitting, stepForm.formData]);
 
   const handleResendOtp = useCallback(async () => {
     clearMessages();
@@ -134,13 +113,13 @@ export function useSignUpForm() {
 
     try {
       await resendSignUpOtp({ email: stepForm.formData.email });
-      setSuccessMessage('A new verification code has been sent to your email.');
+      setSuccessMessage(OTP_RESENT_MESSAGE);
     } catch (requestError) {
       setError(requestError.message);
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, stepForm.formData.email]);
+  }, [clearMessages, setError, setIsSubmitting, setSuccessMessage, stepForm.formData.email]);
 
   const handleBack = useCallback(() => {
     clearMessages();
@@ -148,9 +127,10 @@ export function useSignUpForm() {
   }, [clearMessages, stepForm]);
 
   return {
-    ...stepForm,
-    isFirstStep: stepForm.currentStep === SIGN_UP_STEPS.PROFILE,
-    isLastStep: stepForm.currentStep === SIGN_UP_STEPS.OTP,
+    currentStep: stepForm.currentStep,
+    formData: stepForm.formData,
+    updateField: stepForm.updateField,
+    isFirstStep: stepForm.isFirstStep,
     isSubmitting,
     error,
     successMessage,

@@ -1,9 +1,9 @@
-import AuthForm from '../../../components/auth/shared/AuthForm';
-import AuthFormMessage from '../../../components/auth/shared/AuthFormMessage';
-import OtpVerificationFields from '../../../components/auth/shared/OtpVerificationFields';
-import FormActions from '../../../components/ui/FormActions';
+import AuthForm from '../AuthForm';
+import AuthFormMessage from '../AuthFormMessage';
+import OtpVerificationFields from '../OtpVerificationFields';
+import FormActions from '../../../ui/FormActions';
 
-export default function OtpStep({
+export default function OtpVerificationStep({
   email,
   otp,
   onOtpChange,
@@ -13,6 +13,7 @@ export default function OtpStep({
   isSubmitting = false,
   error = '',
   successMessage = '',
+  continueLabel = 'Verify Code',
 }) {
   return (
     <AuthForm onSubmit={onContinue}>
@@ -28,7 +29,7 @@ export default function OtpStep({
 
       <FormActions
         onBack={onBack}
-        continueLabel="Verify Code"
+        continueLabel={continueLabel}
         continueType="submit"
         onContinue={onContinue}
         isSubmitting={isSubmitting}

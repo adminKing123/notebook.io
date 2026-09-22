@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   requestPasswordReset,
@@ -6,45 +6,20 @@ import {
   resendPasswordResetOtp,
   verifyPasswordResetOtp,
 } from '../../../api/auth';
+import { OTP_RESENT_MESSAGE } from '../../../components/auth/shared/constants';
+import { useAuthFormMessages } from '../../../components/auth/shared/hooks/useAuthFormMessages';
 import { useStepForm } from '../../../components/auth/shared/hooks/useStepForm';
+import {
+  validateEmail,
+  validateOtp,
+  validatePassword,
+} from '../../../components/auth/shared/validators';
 import { ROUTES } from '../../../routes';
 import {
   FORGOT_PASSWORD_STEP_COUNT,
   FORGOT_PASSWORD_STEPS,
   INITIAL_FORGOT_PASSWORD_FORM,
 } from '../constants';
-
-function validateEmail(formData) {
-  if (!formData.email.trim()) {
-    return 'Email address is required.';
-  }
-
-  return '';
-}
-
-function validateOtp(formData) {
-  if (!/^\d{6}$/.test(formData.otp)) {
-    return 'Enter the 6-digit verification code.';
-  }
-
-  return '';
-}
-
-function validatePassword(formData) {
-  if (!formData.password) {
-    return 'Password is required.';
-  }
-
-  if (formData.password.length < 8) {
-    return 'Password must be at least 8 characters.';
-  }
-
-  if (formData.password !== formData.confirmPassword) {
-    return 'Passwords do not match.';
-  }
-
-  return '';
-}
 
 export function useForgotPasswordForm() {
   const navigate = useNavigate();
@@ -53,15 +28,15 @@ export function useForgotPasswordForm() {
     stepCount: FORGOT_PASSWORD_STEP_COUNT,
     initialStep: FORGOT_PASSWORD_STEPS.EMAIL,
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  const clearMessages = useCallback(() => {
-    setError('');
-    setSuccessMessage('');
-  }, []);
+  const {
+    isSubmitting,
+    setIsSubmitting,
+    error,
+    setError,
+    successMessage,
+    setSuccessMessage,
+    clearMessages,
+  } = useAuthFormMessages();
 
   const handleEmailContinue = useCallback(async () => {
     clearMessages();
@@ -82,7 +57,7 @@ export function useForgotPasswordForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, stepForm]);
+  }, [clearMessages, setError, setIsSubmitting, stepForm]);
 
   const handleOtpContinue = useCallback(async () => {
     clearMessages();
@@ -106,7 +81,7 @@ export function useForgotPasswordForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, stepForm]);
+  }, [clearMessages, setError, setIsSubmitting, stepForm]);
 
   const handlePasswordContinue = useCallback(async () => {
     clearMessages();
@@ -132,7 +107,7 @@ export function useForgotPasswordForm() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, navigate, stepForm.formData]);
+  }, [clearMessages, navigate, setError, setIsSubmitting, stepForm.formData]);
 
   const handleResendOtp = useCallback(async () => {
     clearMessages();
@@ -140,13 +115,13 @@ export function useForgotPasswordForm() {
 
     try {
       await resendPasswordResetOtp({ email: stepForm.formData.email.trim() });
-      setSuccessMessage('A new verification code has been sent to your email.');
+      setSuccessMessage(OTP_RESENT_MESSAGE);
     } catch (requestError) {
       setError(requestError.message);
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, stepForm.formData.email]);
+  }, [clearMessages, setError, setIsSubmitting, setSuccessMessage, stepForm.formData.email]);
 
   const handleBack = useCallback(() => {
     clearMessages();
@@ -154,9 +129,10 @@ export function useForgotPasswordForm() {
   }, [clearMessages, stepForm]);
 
   return {
-    ...stepForm,
-    isFirstStep: stepForm.currentStep === FORGOT_PASSWORD_STEPS.EMAIL,
-    isLastStep: stepForm.currentStep === FORGOT_PASSWORD_STEPS.PASSWORD,
+    currentStep: stepForm.currentStep,
+    formData: stepForm.formData,
+    updateField: stepForm.updateField,
+    isFirstStep: stepForm.isFirstStep,
     isSubmitting,
     error,
     successMessage,

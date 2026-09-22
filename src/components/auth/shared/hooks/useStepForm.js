@@ -23,6 +23,5 @@ export function useStepForm({ initialForm, stepCount, initialStep = 0 }) {
     goNext,
     goBack,
     isFirstStep: currentStep === initialStep,
-    isLastStep: currentStep === stepCount - 1,
   };
 }

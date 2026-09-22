@@ -1,7 +1,7 @@
 import { getAccessToken } from '../auth/tokenStorage';
 import { API_BASE_URL } from '../config';
 
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor(message, { status, data } = {}) {
     super(message);
     this.name = 'ApiError';
