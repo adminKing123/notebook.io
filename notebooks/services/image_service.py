@@ -1,7 +1,7 @@
 import uuid
 from pathlib import PurePosixPath
 
-from cdn.assets.image_converter import ImageConversionError
+from cdn.assets.image_converter import ImageConversionError, normalize_image
 from cdn.assets.upload_service import AssetUploadService
 from cdn.exceptions import CDNError
 from notebooks.models import Image
@@ -17,8 +17,12 @@ class ImageService:
 
     def upload_image(self, *, owner, image_file, namespace: str) -> Image:
         try:
-            asset = self.asset_upload_service.upload_image(
+            normalized = normalize_image(
                 image_file.read(),
+                self.asset_upload_service.settings,
+            )
+            asset = self.asset_upload_service.upload_normalized_image(
+                normalized,
                 namespace=namespace,
                 filename_prefix=f'image-{uuid.uuid4().hex}',
             )
@@ -28,9 +32,13 @@ class ImageService:
             raise ImageServiceError('Unable to upload image. Please try again.') from error
 
         file_name = PurePosixPath(asset.key).name
+        aspect_ratio = normalized.width / normalized.height if normalized.height else 1.0
 
         return Image.objects.create(
             owner=owner,
             url=asset.url,
             file_name=file_name,
+            width=normalized.width,
+            height=normalized.height,
+            aspect_ratio=aspect_ratio,
         )

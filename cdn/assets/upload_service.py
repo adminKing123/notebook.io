@@ -1,7 +1,7 @@
 import uuid
 from pathlib import PurePosixPath
 
-from cdn.assets.image_converter import normalize_image
+from cdn.assets.image_converter import NormalizedImage, normalize_image
 from cdn.base import CDNClient, StoredAsset
 from config.config import CDNSettings, load_cdn_settings
 from cdn.factory import get_cdn_client
@@ -25,6 +25,19 @@ class AssetUploadService:
         filename_prefix: str | None = None,
     ) -> StoredAsset:
         normalized = normalize_image(content, self.settings)
+        return self.upload_normalized_image(
+            normalized,
+            namespace=namespace,
+            filename_prefix=filename_prefix,
+        )
+
+    def upload_normalized_image(
+        self,
+        normalized: NormalizedImage,
+        *,
+        namespace: str,
+        filename_prefix: str | None = None,
+    ) -> StoredAsset:
         asset_name = filename_prefix or uuid.uuid4().hex
         asset_key = str(
             PurePosixPath(self.settings.uploads_folder)

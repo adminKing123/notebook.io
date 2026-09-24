@@ -83,6 +83,9 @@ class Image(models.Model):
     )
     url = models.URLField()
     file_name = models.CharField(max_length=255)
+    width = models.PositiveIntegerField(default=0)
+    height = models.PositiveIntegerField(default=0)
+    aspect_ratio = models.FloatField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
