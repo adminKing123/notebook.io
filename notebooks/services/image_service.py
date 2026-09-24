@@ -42,3 +42,17 @@ class ImageService:
             height=normalized.height,
             aspect_ratio=aspect_ratio,
         )
+
+    def list_for_owner(self, *, owner, page: int, page_size: int) -> dict:
+        images = Image.objects.filter(owner=owner).order_by('-created_at')
+        total = images.count()
+        offset = (page - 1) * page_size
+        page_images = images[offset:offset + page_size]
+
+        return {
+            'total': total,
+            'page': page,
+            'page_size': page_size,
+            'has_more': offset + page_size < total,
+            'results': list(page_images),
+        }

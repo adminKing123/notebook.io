@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from notebooks.constants import DEFAULT_PAGE_WINDOW_SIZE
-from notebooks.models import Image, Notebook
+from notebooks.models import Notebook
 from notebooks.serializers import (
     CreateNotebookSerializer,
     ImageSerializer,
@@ -186,17 +186,16 @@ class UserImagesView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        images = Image.objects.filter(owner=request.user).order_by('-created_at')
-        total = images.count()
-        offset = (page - 1) * page_size
-        page_images = images[offset:offset + page_size]
+        image_service = ImageService()
+        listing = image_service.list_for_owner(
+            owner=request.user,
+            page=page,
+            page_size=page_size,
+        )
 
         return Response({
-            'total': total,
-            'page': page,
-            'page_size': page_size,
-            'has_more': offset + page_size < total,
-            'results': ImageSerializer(page_images, many=True).data,
+            **listing,
+            'results': ImageSerializer(listing['results'], many=True).data,
         })
 
 
