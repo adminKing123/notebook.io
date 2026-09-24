@@ -74,16 +74,38 @@ def normalize_image(content: bytes, settings: CDNSettings) -> NormalizedImage:
 
 
 def _prepare_image(image: Image.Image, image_format: str) -> Image.Image:
-    if image_format in {'JPEG', 'WEBP'} and image.mode not in {'RGB', 'L'}:
-        background = Image.new('RGB', image.size, (255, 255, 255))
-        rgba = image.convert('RGBA')
-        background.paste(rgba, mask=rgba.split()[-1])
-        return background
+    if image_format == 'JPEG':
+        return _flatten_to_rgb(image, background=(255, 255, 255))
 
-    if image_format == 'JPEG' and image.mode != 'RGB':
-        return image.convert('RGB')
+    if image_format == 'WEBP':
+        if _has_transparency(image):
+            return image.convert('RGBA')
+        if image.mode not in {'RGB', 'L'}:
+            return image.convert('RGB')
+        return image
 
     return image
+
+
+def _has_transparency(image: Image.Image) -> bool:
+    if image.mode in {'RGBA', 'LA', 'PA'}:
+        alpha = image.getchannel('A')
+        return alpha.getextrema()[0] < 255
+
+    if image.mode == 'P' and 'transparency' in image.info:
+        return True
+
+    return False
+
+
+def _flatten_to_rgb(image: Image.Image, *, background: tuple[int, int, int]) -> Image.Image:
+    if image.mode in {'RGB', 'L'}:
+        return image.convert('RGB')
+
+    canvas = Image.new('RGB', image.size, background)
+    rgba = image.convert('RGBA')
+    canvas.paste(rgba, mask=rgba.split()[-1])
+    return canvas
 
 
 def _resize_image(image: Image.Image, max_width: int) -> Image.Image:
