@@ -49,7 +49,6 @@ class NotebookPageWindowSerializer(serializers.Serializer):
 
 
 class NotebookSerializer(serializers.ModelSerializer):
-    full_description = serializers.CharField(source='description', read_only=True)
     page_count = serializers.IntegerField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
@@ -61,7 +60,6 @@ class NotebookSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'description',
-            'full_description',
             'access',
             'thumbnail_url',
             'page_count',
