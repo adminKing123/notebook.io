@@ -14,8 +14,6 @@ function getInfoFieldValue(notebook, field) {
 }
 
 function NotebookCardInfoContent({ notebook }) {
-  const fullDescription = notebook.fullDescription ?? notebook.description;
-
   return (
     <>
       <dl className="notebook-card-info__details">
@@ -29,7 +27,7 @@ function NotebookCardInfoContent({ notebook }) {
 
       <div className="notebook-card-info__description">
         <p className="notebook-card-info__description-label">Description</p>
-        <p className="notebook-card-info__description-text">{fullDescription}</p>
+        <p className="notebook-card-info__description-text">{notebook.description}</p>
       </div>
     </>
   );

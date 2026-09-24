@@ -5,7 +5,6 @@ function mapNotebook(notebook) {
     id: notebook.id,
     title: notebook.title,
     description: notebook.description,
-    fullDescription: notebook.full_description ?? notebook.description,
     pageCount: notebook.page_count,
     access: notebook.access,
     thumbnailUrl: notebook.thumbnail_url,
