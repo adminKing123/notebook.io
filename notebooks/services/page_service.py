@@ -6,9 +6,10 @@ from django.db.models import F
 from cdn.assets.image_converter import ImageConversionError
 from cdn.assets.upload_service import AssetUploadService
 from cdn.exceptions import CDNError
-from notebooks.constants import DEFAULT_PAGE_WINDOW_SIZE, MAX_CONTENT_LINES, MAX_LINE_LENGTH
+from notebooks.constants import DEFAULT_PAGE_WINDOW_SIZE
 from notebooks.models import Notebook, NotebookPage, NotebookPageImage
 from notebooks.services.window import calculate_page_window
+from notebooks.utils.content import sanitize_page_content
 
 
 class PageServiceError(Exception):
@@ -46,7 +47,7 @@ class PageService:
             page_number=1,
             heading='',
             subheading='',
-            content=[''] * MAX_CONTENT_LINES,
+            content='',
         )
         notebook.page_count = 1
         notebook.save(update_fields=['page_count', 'updated_at'])
@@ -92,7 +93,7 @@ class PageService:
     def save_page(self, *, page: NotebookPage, payload: dict) -> NotebookPage:
         page.heading = self._sanitize_line(payload.get('heading', page.heading))
         page.subheading = self._sanitize_line(payload.get('subheading', page.subheading))
-        page.content = self._sanitize_content(payload.get('content', page.content))
+        page.content = sanitize_page_content(payload.get('content', page.content))
         page.save(update_fields=['heading', 'subheading', 'content', 'updated_at'])
 
         if 'images' in payload:
@@ -112,7 +113,7 @@ class PageService:
             page_number=next_page_number,
             heading='',
             subheading='',
-            content=[''] * MAX_CONTENT_LINES,
+            content='',
         )
         Notebook.objects.filter(id=notebook.id).update(
             page_count=F('page_count') + 1,
@@ -206,13 +207,3 @@ class PageService:
 
     def _sanitize_line(self, value) -> str:
         return str(value or '')[:255]
-
-    def _sanitize_content(self, value) -> list[str]:
-        if not isinstance(value, list):
-            return [''] * MAX_CONTENT_LINES
-
-        sanitized = [str(line or '')[:MAX_LINE_LENGTH] for line in value[:MAX_CONTENT_LINES]]
-        if len(sanitized) < MAX_CONTENT_LINES:
-            sanitized.extend([''] * (MAX_CONTENT_LINES - len(sanitized)))
-
-        return sanitized

@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from notebooks.constants import MAX_CONTENT_LINES, MAX_LINE_LENGTH
 from notebooks.models import Notebook, NotebookAccess, NotebookPage, NotebookPageImage
 
 
@@ -38,11 +37,7 @@ class NotebookPageSerializer(serializers.ModelSerializer):
 class SaveNotebookPageSerializer(serializers.Serializer):
     heading = serializers.CharField(required=False, allow_blank=True, max_length=255)
     subheading = serializers.CharField(required=False, allow_blank=True, max_length=255)
-    content = serializers.ListField(
-        child=serializers.CharField(max_length=MAX_LINE_LENGTH, allow_blank=True),
-        required=False,
-        max_length=MAX_CONTENT_LINES,
-    )
+    content = serializers.CharField(required=False, allow_blank=True)
     images = NotebookPageImageWriteSerializer(many=True, required=False)
 
 

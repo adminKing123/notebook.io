@@ -49,7 +49,7 @@ class NotebookPage(models.Model):
     page_number = models.PositiveIntegerField()
     heading = models.CharField(max_length=255, blank=True)
     subheading = models.CharField(max_length=255, blank=True)
-    content = models.JSONField(default=list, blank=True)
+    content = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
