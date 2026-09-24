@@ -19,9 +19,10 @@ export function buildInitialLines({ title = '', subtitle, content = '' } = {}) {
   lines[TITLE_LINE_INDEX] = truncateLine(title);
   lines[SUBTITLE_LINE_INDEX] = truncateLine(subtitle ?? formatTodaySubtitle());
 
-  const contentLines = Array.isArray(content)
-    ? content.map(truncateLine)
-    : splitTextIntoLines(content, CONTENT_LINE_COUNT);
+  const contentLines = splitTextIntoLines(
+    typeof content === 'string' ? content : '',
+    CONTENT_LINE_COUNT,
+  );
 
   contentLines.slice(0, CONTENT_LINE_COUNT).forEach((line, index) => {
     lines[CONTENT_LINE_START + index] = line;

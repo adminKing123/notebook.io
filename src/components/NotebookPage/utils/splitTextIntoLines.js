@@ -18,10 +18,17 @@ export function splitTextIntoLines(text, maxLines, lineCharLimit = LINE_CHAR_ALL
   const result = [];
 
   for (const segment of text.split('\n')) {
+    if (result.length >= maxLines) {
+      break;
+    }
+
+    if (segment.length === 0) {
+      result.push('');
+      continue;
+    }
+
     const chunks = chunkText(segment, maxLines - result.length, lineCharLimit);
     result.push(...chunks);
-
-    if (result.length >= maxLines) break;
   }
 
   return result;

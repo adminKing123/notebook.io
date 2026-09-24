@@ -15,6 +15,7 @@ import {
 } from '../../../components/NotebookPage/images/utils/loadImageFromFile';
 import { createPageId } from '../../../components/Notebook/utils/normalizePages';
 import { AUTOSAVE_DEBOUNCE_MS, PAGE_WINDOW_SIZE } from '../constants';
+import { contentLinesToText } from '../utils/pageContent';
 import {
   mapApiPageImage,
   mergePageWindow,
@@ -139,53 +140,58 @@ export function useNotebookEditor(notebookId) {
   );
 
   const scheduleSave = useCallback(
-    (pageIndex) => {
-      const page = pagesRef.current[pageIndex];
-      if (!page || page.loading) {
+    (pageSnapshot) => {
+      if (!pageSnapshot?.id || pageSnapshot.loading || pageSnapshot.id.startsWith('loading-')) {
         return;
       }
 
-      debouncedSave(page.id, serializePageForSave(page));
+      debouncedSave(pageSnapshot.id, serializePageForSave(pageSnapshot));
     },
     [debouncedSave],
   );
 
   const handleContentChange = useCallback(
     (pageIndex, content) => {
-      setPages((previousPages) =>
-        previousPages.map((page, index) =>
-          index === pageIndex
-            ? {
-                ...page,
-                title: content.title,
-                subtitle: content.subtitle,
-                content: content.content,
-              }
-            : page,
-        ),
+      const currentPage = pagesRef.current[pageIndex];
+      if (!currentPage) {
+        return;
+      }
+
+      const updatedPage = {
+        ...currentPage,
+        title: content.title,
+        subtitle: content.subtitle,
+        content: contentLinesToText(content.content),
+      };
+
+      pagesRef.current = pagesRef.current.map((page, index) =>
+        index === pageIndex ? updatedPage : page,
       );
-      scheduleSave(pageIndex);
+      setPages(pagesRef.current);
+      scheduleSave(updatedPage);
     },
     [scheduleSave],
   );
 
   const handleUpdateImage = useCallback(
     (pageIndex, imageId, patch) => {
-      setPages((previousPages) =>
-        previousPages.map((page, index) => {
-          if (index !== pageIndex) {
-            return page;
-          }
+      const currentPage = pagesRef.current[pageIndex];
+      if (!currentPage) {
+        return;
+      }
 
-          return {
-            ...page,
-            images: page.images.map((image) =>
-              image.id === imageId ? { ...image, ...patch } : image,
-            ),
-          };
-        }),
+      const updatedPage = {
+        ...currentPage,
+        images: currentPage.images.map((image) =>
+          image.id === imageId ? { ...image, ...patch } : image,
+        ),
+      };
+
+      pagesRef.current = pagesRef.current.map((page, index) =>
+        index === pageIndex ? updatedPage : page,
       );
-      scheduleSave(pageIndex);
+      setPages(pagesRef.current);
+      scheduleSave(updatedPage);
     },
     [scheduleSave],
   );
@@ -219,25 +225,22 @@ export function useNotebookEditor(notebookId) {
         const uploadedImage = await uploadNotebookPageImage(notebookId, page.id, file);
         revokeImageSrc(src);
 
-        setPages((previousPages) =>
-          previousPages.map((currentPage, index) => {
-            if (index !== pageIndex) {
-              return currentPage;
-            }
+        const pageWithUploadedImage = {
+          ...pagesRef.current[pageIndex],
+          images: pagesRef.current[pageIndex].images
+            .filter((image) => image.id !== tempId)
+            .concat({
+              ...mapApiPageImage(uploadedImage),
+              ...layout,
+            }),
+        };
 
-            return {
-              ...currentPage,
-              images: currentPage.images
-                .filter((image) => image.id !== tempId)
-                .concat({
-                  ...mapApiPageImage(uploadedImage),
-                  ...layout,
-                }),
-            };
-          }),
+        pagesRef.current = pagesRef.current.map((currentPage, index) =>
+          index === pageIndex ? pageWithUploadedImage : currentPage,
         );
+        setPages(pagesRef.current);
 
-        scheduleSave(pageIndex);
+        scheduleSave(pageWithUploadedImage);
         return uploadedImage.id;
       } catch (requestError) {
         setError(requestError.message);
@@ -249,24 +252,26 @@ export function useNotebookEditor(notebookId) {
 
   const handleDeleteImage = useCallback(
     (pageIndex, imageId) => {
-      setPages((previousPages) =>
-        previousPages.map((page, index) => {
-          if (index !== pageIndex) {
-            return page;
-          }
+      const currentPage = pagesRef.current[pageIndex];
+      if (!currentPage) {
+        return;
+      }
 
-          const removedImage = page.images.find((image) => image.id === imageId);
-          if (removedImage?.src?.startsWith('blob:')) {
-            revokeImageSrc(removedImage.src);
-          }
+      const removedImage = currentPage.images.find((image) => image.id === imageId);
+      if (removedImage?.src?.startsWith('blob:')) {
+        revokeImageSrc(removedImage.src);
+      }
 
-          return {
-            ...page,
-            images: page.images.filter((image) => image.id !== imageId),
-          };
-        }),
+      const updatedPage = {
+        ...currentPage,
+        images: currentPage.images.filter((image) => image.id !== imageId),
+      };
+
+      pagesRef.current = pagesRef.current.map((page, index) =>
+        index === pageIndex ? updatedPage : page,
       );
-      scheduleSave(pageIndex);
+      setPages(pagesRef.current);
+      scheduleSave(updatedPage);
     },
     [scheduleSave],
   );
@@ -282,7 +287,7 @@ export function useNotebookEditor(notebookId) {
           pageNumber: createdPage.page_number,
           title: createdPage.heading ?? '',
           subtitle: createdPage.subheading ?? '',
-          content: createdPage.content ?? [],
+          content: createdPage.content ?? '',
           images: Array.isArray(createdPage.images)
             ? createdPage.images.map(mapApiPageImage)
             : [],

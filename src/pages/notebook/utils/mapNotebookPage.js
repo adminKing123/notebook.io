@@ -1,3 +1,5 @@
+import { contentLinesToText, parseApiContent } from './pageContent';
+
 export function mapApiPageImage(image) {
   return {
     id: image.id,
@@ -15,7 +17,7 @@ export function mapApiPage(page) {
     pageNumber: page.page_number,
     title: page.heading ?? '',
     subtitle: page.subheading ?? '',
-    content: page.content ?? [],
+    content: parseApiContent(page.content),
     images: Array.isArray(page.images) ? page.images.map(mapApiPageImage) : [],
     loading: false,
   };
@@ -27,7 +29,7 @@ export function createLoadingPlaceholder(pageNumber) {
     pageNumber,
     title: '',
     subtitle: '',
-    content: [],
+    content: '',
     images: [],
     loading: true,
   };
@@ -59,7 +61,7 @@ export function serializePageForSave(page) {
   return {
     heading: page.title ?? '',
     subheading: page.subtitle ?? '',
-    content: Array.isArray(page.content) ? page.content : [],
+    content: contentLinesToText(page.content),
     images: (page.images ?? []).map((image) => ({
       id: image.id,
       ...(image.src && !image.src.startsWith('blob:') ? { url: image.src } : {}),

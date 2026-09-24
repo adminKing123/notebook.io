@@ -13,7 +13,7 @@
  * @property {string} [id]
  * @property {string} [title]
  * @property {string} [subtitle]
- * @property {string|string[]} [content]
+ * @property {string} [content]
  * @property {NotebookPageImage[]} [images]
  */
 

@@ -1,10 +1,4 @@
 import NotebookPageImages from './images/NotebookPageImages';
-import NotebookPageContentLines from './NotebookPageContentLines';
-import NotebookPageHeader from './NotebookPageHeader';
-import {
-  SUBTITLE_LINE_INDEX,
-  TITLE_LINE_INDEX,
-} from './constants';
 import {
   handleSheetDragOverCapture,
   handleSheetDropCapture,
@@ -13,13 +7,7 @@ import {
 export default function NotebookPageSheet({
   sheetRef,
   typography,
-  initialPageLines,
-  firstPageRowRef,
-  registerPageInput,
-  createKeyDownHandler,
-  createPasteHandler,
-  createInputHandler,
-  createFocusHandler,
+  editor,
   images,
   selectedImageId,
   onSelectImage,
@@ -40,25 +28,7 @@ export default function NotebookPageSheet({
       <div className="notebook-page__margin-line-1" aria-hidden="true" />
       <div className="notebook-page__margin-line-2" aria-hidden="true" />
 
-      <NotebookPageHeader
-        titleValue={initialPageLines[TITLE_LINE_INDEX]}
-        subtitleValue={initialPageLines[SUBTITLE_LINE_INDEX]}
-        firstPageRowRef={firstPageRowRef}
-        registerPageInput={registerPageInput}
-        createKeyDownHandler={createKeyDownHandler}
-        createPasteHandler={createPasteHandler}
-        createInputHandler={createInputHandler}
-        createFocusHandler={createFocusHandler}
-      />
-
-      <NotebookPageContentLines
-        initialPageLines={initialPageLines}
-        registerPageInput={registerPageInput}
-        createKeyDownHandler={createKeyDownHandler}
-        createPasteHandler={createPasteHandler}
-        createInputHandler={createInputHandler}
-        createFocusHandler={createFocusHandler}
-      />
+      {editor}
 
       {onSelectImage && onUpdateImage && (
         <NotebookPageImages
