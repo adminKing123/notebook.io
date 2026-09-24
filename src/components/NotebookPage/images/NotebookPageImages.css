@@ -70,6 +70,7 @@
 }
 
 .notebook-page__image--selected {
+  overflow: visible;
   outline: 2px solid #2563eb;
   outline-offset: 1px;
 }
@@ -106,15 +107,23 @@
 
 .notebook-page__image-handle {
   position: absolute;
-  z-index: 2;
+  z-index: 5;
   width: 12px;
   height: 12px;
+  padding: 0;
   border: 2px solid #2563eb;
   border-radius: 9999px;
   background-color: #ffffff;
   cursor: nwse-resize;
   touch-action: none;
   pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.notebook-page__image-handle::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
 }
 
 .notebook-page__image-handle--nw {
@@ -139,4 +148,36 @@
   right: -6px;
   bottom: -6px;
   cursor: nwse-resize;
+}
+
+@media (pointer: coarse) {
+  .notebook-page__image-handle {
+    width: 18px;
+    height: 18px;
+    border-width: 3px;
+  }
+
+  .notebook-page__image-handle::before {
+    inset: -16px;
+  }
+
+  .notebook-page__image-handle--nw {
+    top: -9px;
+    left: -9px;
+  }
+
+  .notebook-page__image-handle--ne {
+    top: -9px;
+    right: -9px;
+  }
+
+  .notebook-page__image-handle--sw {
+    bottom: -9px;
+    left: -9px;
+  }
+
+  .notebook-page__image-handle--se {
+    right: -9px;
+    bottom: -9px;
+  }
 }

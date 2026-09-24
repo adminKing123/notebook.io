@@ -8,32 +8,46 @@ function clampWidth(width) {
   return Math.max(MIN_WIDTH_PERCENT, Math.min(width, 100));
 }
 
-function attachPointerSession(target, pointerId, onMove, onEnd) {
-  target.setPointerCapture(pointerId);
-
+function attachPointerSession(activeTarget, pointerId, onMove, onEnd) {
   const handleMove = (event) => {
-    if (event.pointerId !== pointerId) return;
+    if (event.pointerId !== pointerId) {
+      return;
+    }
+
+    event.preventDefault();
     onMove(event);
   };
 
-  const handleEnd = (event) => {
-    if (event.pointerId !== pointerId) return;
+  const cleanup = () => {
+    window.removeEventListener('pointermove', handleMove);
+    window.removeEventListener('pointerup', handleEnd);
+    window.removeEventListener('pointercancel', handleEnd);
 
     try {
-      target.releasePointerCapture(pointerId);
+      activeTarget.releasePointerCapture(pointerId);
     } catch {
       // Pointer capture may already be released.
     }
+  };
 
-    target.removeEventListener('pointermove', handleMove);
-    target.removeEventListener('pointerup', handleEnd);
-    target.removeEventListener('pointercancel', handleEnd);
+  const handleEnd = (event) => {
+    if (event.pointerId !== pointerId) {
+      return;
+    }
+
+    cleanup();
     onEnd(event);
   };
 
-  target.addEventListener('pointermove', handleMove);
-  target.addEventListener('pointerup', handleEnd);
-  target.addEventListener('pointercancel', handleEnd);
+  try {
+    activeTarget.setPointerCapture(pointerId);
+  } catch {
+    // Some browsers reject capture on non-interactive nodes; window listeners still work.
+  }
+
+  window.addEventListener('pointermove', handleMove, { passive: false });
+  window.addEventListener('pointerup', handleEnd);
+  window.addEventListener('pointercancel', handleEnd);
 }
 
 export function useImageTransform({ containerRef, onChange }) {
@@ -46,7 +60,11 @@ export function useImageTransform({ containerRef, onChange }) {
 
   const startDrag = useCallback(
     (event, image) => {
-      if (event.target.closest('.notebook-page__image-handle')) {
+      if (
+        event.target.closest(
+          '.notebook-page__image-handle, .notebook-page__image-remove',
+        )
+      ) {
         return;
       }
 
@@ -54,7 +72,9 @@ export function useImageTransform({ containerRef, onChange }) {
       event.stopPropagation();
 
       const containerRect = getContainerRect();
-      if (!containerRect) return;
+      if (!containerRect) {
+        return;
+      }
 
       const target = event.currentTarget;
       const pointerId = event.pointerId;
@@ -90,7 +110,9 @@ export function useImageTransform({ containerRef, onChange }) {
       event.stopPropagation();
 
       const containerRect = getContainerRect();
-      if (!containerRect) return;
+      if (!containerRect) {
+        return;
+      }
 
       const target = event.currentTarget;
       const pointerId = event.pointerId;

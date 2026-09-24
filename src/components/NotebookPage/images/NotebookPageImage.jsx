@@ -94,9 +94,10 @@ export default function NotebookPageImage({
       {isSelected &&
         !image.uploading &&
         RESIZE_HANDLES.map((corner) => (
-          <span
+          <button
             key={corner}
-            role="presentation"
+            type="button"
+            aria-label={`Resize image from ${corner} corner`}
             className={`notebook-page__image-handle notebook-page__image-handle--${corner}`}
             onPointerDown={(event) => startResize(event, corner, image)}
           />
