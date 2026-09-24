@@ -8,7 +8,6 @@ import {
 } from '../../ui/Dialog';
 import Spinner from '../../ui/Spinner';
 import './uploaded-images-picker.css';
-import '../../ui/dialog.css';
 
 const PAGE_SIZE = 24;
 

@@ -1,7 +1,5 @@
-import { useRef, useState } from 'react';
 import {
   MdAdd,
-  MdChevronRight,
   MdDeleteOutline,
   MdImage,
   MdMenuBook,
@@ -9,7 +7,6 @@ import {
   MdRemove,
   MdUpload,
 } from 'react-icons/md';
-import { MAX_PAGE_IMAGE_IMPORT } from '../../../pages/notebook/constants';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,28 +16,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '../../ui/DropdownMenu';
+import { ConfigMenuItemContent, ConfigSubmenuTriggerContent } from './ConfigMenuParts';
+import { useNotebookImageImport } from './hooks/useNotebookImageImport';
 import UploadedImagesPickerDialog from './UploadedImagesPickerDialog';
-
-function MenuItemContent({ icon: Icon, children }) {
-  return (
-    <span className="notebook-config__menu-item-content">
-      <Icon className="notebook-config__menu-item-icon" aria-hidden="true" />
-      <span>{children}</span>
-    </span>
-  );
-}
-
-function SubmenuTriggerContent({ icon: Icon, children }) {
-  return (
-    <span className="notebook-config__submenu-trigger-content">
-      <span className="notebook-config__menu-item-content">
-        <Icon className="notebook-config__menu-item-icon" aria-hidden="true" />
-        <span>{children}</span>
-      </span>
-      <MdChevronRight className="notebook-config__submenu-chevron" aria-hidden="true" />
-    </span>
-  );
-}
 
 export default function NotebookToolsMenu({
   zoom,
@@ -54,20 +32,14 @@ export default function NotebookToolsMenu({
   onImportImage,
   onImportExistingImages,
 }) {
-  const imageInputRef = useRef(null);
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
-
-  const handleImageInputChange = (event) => {
-    const files = Array.from(event.target.files ?? []).slice(0, MAX_PAGE_IMAGE_IMPORT);
-
-    files.forEach((file) => {
-      if (file.type.startsWith('image/')) {
-        onImportImage(file);
-      }
-    });
-
-    event.target.value = '';
-  };
+  const {
+    imageInputRef,
+    isPickerOpen,
+    setIsPickerOpen,
+    handleImageInputChange,
+    openFilePicker,
+    maxSelection,
+  } = useNotebookImageImport(onImportImage);
 
   const handleZoomOutClick = (event) => {
     event.preventDefault();
@@ -105,7 +77,7 @@ export default function NotebookToolsMenu({
           align="end"
           sideOffset={10}
         >
-          <div className="notebook-config__menu-zoom" role="group" aria-label="Scale">
+          <div className="notebook-config__menu-zoom" role="group" aria-label="Scale and zoom">
             <span className="notebook-config__menu-zoom-label">Scale / Zoom</span>
             <div className="notebook-config__menu-zoom-controls">
               <button
@@ -133,39 +105,39 @@ export default function NotebookToolsMenu({
           </div>
 
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="notebook-config__submenu-trigger">
-              <SubmenuTriggerContent icon={MdMenuBook}>Page</SubmenuTriggerContent>
+            <DropdownMenuSubTrigger className="notebook-config__menu-row notebook-config__submenu-trigger">
+              <ConfigSubmenuTriggerContent icon={MdMenuBook}>Page</ConfigSubmenuTriggerContent>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="notebook-config__menu notebook-config__submenu">
-              <DropdownMenuItem className="notebook-config__menu-item" onSelect={onAddPage}>
-                <MenuItemContent icon={MdAdd}>Add page</MenuItemContent>
+              <DropdownMenuItem className="notebook-config__menu-row notebook-config__menu-item" onSelect={onAddPage}>
+                <ConfigMenuItemContent icon={MdAdd}>Add page</ConfigMenuItemContent>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="notebook-config__menu-item notebook-config__menu-item--danger"
+                className="notebook-config__menu-row notebook-config__menu-item notebook-config__menu-item--danger"
                 disabled={!canRemovePage}
                 onSelect={onRemovePage}
               >
-                <MenuItemContent icon={MdDeleteOutline}>Remove page</MenuItemContent>
+                <ConfigMenuItemContent icon={MdDeleteOutline}>Remove page</ConfigMenuItemContent>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="notebook-config__submenu-trigger">
-              <SubmenuTriggerContent icon={MdImage}>Image</SubmenuTriggerContent>
+            <DropdownMenuSubTrigger className="notebook-config__menu-row notebook-config__submenu-trigger">
+              <ConfigSubmenuTriggerContent icon={MdImage}>Image</ConfigSubmenuTriggerContent>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="notebook-config__menu notebook-config__submenu">
               <DropdownMenuItem
-                className="notebook-config__menu-item"
-                onSelect={() => imageInputRef.current?.click()}
+                className="notebook-config__menu-row notebook-config__menu-item"
+                onSelect={openFilePicker}
               >
-                <MenuItemContent icon={MdUpload}>Import from device</MenuItemContent>
+                <ConfigMenuItemContent icon={MdUpload}>Import from device</ConfigMenuItemContent>
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="notebook-config__menu-item"
+                className="notebook-config__menu-row notebook-config__menu-item"
                 onSelect={() => setIsPickerOpen(true)}
               >
-                <MenuItemContent icon={MdImage}>Use uploaded images</MenuItemContent>
+                <ConfigMenuItemContent icon={MdImage}>Use uploaded images</ConfigMenuItemContent>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
@@ -185,7 +157,7 @@ export default function NotebookToolsMenu({
         open={isPickerOpen}
         onOpenChange={setIsPickerOpen}
         onImport={(images) => onImportExistingImages?.(images)}
-        maxSelection={MAX_PAGE_IMAGE_IMPORT}
+        maxSelection={maxSelection}
       />
     </>
   );
