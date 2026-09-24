@@ -36,12 +36,51 @@ class NotebookService:
             thumbnail_url=thumbnail_url,
         )
 
+    def delete_notebook(self, *, notebook_id, owner) -> None:
+        deleted_count, _ = Notebook.objects.filter(id=notebook_id, owner=owner).delete()
+        if deleted_count == 0:
+            raise NotebookServiceError('Notebook not found.')
+
+    def update_notebook(
+        self,
+        *,
+        notebook_id,
+        owner,
+        title: str | None = None,
+        description: str | None = None,
+        access: str | None = None,
+        thumbnail_file=None,
+        clear_thumbnail: bool = False,
+    ) -> Notebook:
+        notebook = Notebook.objects.filter(id=notebook_id, owner=owner).first()
+        if notebook is None:
+            raise NotebookServiceError('Notebook not found.')
+
+        if title is not None:
+            notebook.title = title
+        if description is not None:
+            notebook.description = description
+        if access is not None:
+            notebook.access = access
+
+        if clear_thumbnail:
+            notebook.thumbnail_url = ''
+        elif thumbnail_file is not None:
+            notebook.thumbnail_url = self._upload_thumbnail(
+                owner_id=owner.id,
+                thumbnail_file=thumbnail_file,
+            )
+
+        notebook.save()
+        return notebook
+
     def _upload_thumbnail(self, *, owner_id, thumbnail_file) -> str:
         try:
             asset = self.asset_upload_service.upload_image(
                 thumbnail_file.read(),
                 namespace=f'notebooks/{owner_id}',
                 filename_prefix=f'thumbnail-{uuid.uuid4().hex}',
+                crop_center_square=True,
             )
         except ImageConversionError as error:
             raise NotebookServiceError(str(error)) from error

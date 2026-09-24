@@ -88,3 +88,17 @@ class CreateNotebookSerializer(serializers.Serializer):
         if not cleaned:
             raise serializers.ValidationError('Notebook title is required.')
         return cleaned
+
+
+class UpdateNotebookSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=255, required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
+    access = serializers.ChoiceField(choices=NotebookAccess.choices, required=False)
+    thumbnail = serializers.ImageField(required=False, allow_null=True)
+    clear_thumbnail = serializers.BooleanField(required=False, default=False)
+
+    def validate_title(self, value):
+        cleaned = value.strip()
+        if not cleaned:
+            raise serializers.ValidationError('Notebook title is required.')
+        return cleaned

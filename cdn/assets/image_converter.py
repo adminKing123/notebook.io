@@ -38,7 +38,12 @@ class ImageConversionError(Exception):
     pass
 
 
-def normalize_image(content: bytes, settings: CDNSettings) -> NormalizedImage:
+def normalize_image(
+    content: bytes,
+    settings: CDNSettings,
+    *,
+    crop_center_square: bool = False,
+) -> NormalizedImage:
     image_format = settings.image_format
     format_config = FORMAT_CONFIG.get(image_format)
 
@@ -48,6 +53,8 @@ def normalize_image(content: bytes, settings: CDNSettings) -> NormalizedImage:
     try:
         with Image.open(io.BytesIO(content)) as image:
             image = _prepare_image(image, image_format)
+            if crop_center_square:
+                image = _crop_center_square(image)
             image = _resize_image(image, settings.image_max_width)
             output = io.BytesIO()
             save_kwargs = {
@@ -106,6 +113,18 @@ def _flatten_to_rgb(image: Image.Image, *, background: tuple[int, int, int]) -> 
     rgba = image.convert('RGBA')
     canvas.paste(rgba, mask=rgba.split()[-1])
     return canvas
+
+
+def _crop_center_square(image: Image.Image) -> Image.Image:
+    width, height = image.size
+    side = min(width, height)
+
+    if side <= 0:
+        return image
+
+    left = (width - side) // 2
+    top = (height - side) // 2
+    return image.crop((left, top, left + side, top + side))
 
 
 def _resize_image(image: Image.Image, max_width: int) -> Image.Image:

@@ -23,8 +23,13 @@ class AssetUploadService:
         *,
         namespace: str,
         filename_prefix: str | None = None,
+        crop_center_square: bool = False,
     ) -> StoredAsset:
-        normalized = normalize_image(content, self.settings)
+        normalized = normalize_image(
+            content,
+            self.settings,
+            crop_center_square=crop_center_square,
+        )
         return self.upload_normalized_image(
             normalized,
             namespace=namespace,

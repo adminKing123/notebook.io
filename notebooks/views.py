@@ -8,6 +8,7 @@ from notebooks.constants import DEFAULT_PAGE_WINDOW_SIZE
 from notebooks.models import Notebook
 from notebooks.serializers import (
     CreateNotebookSerializer,
+    UpdateNotebookSerializer,
     ImageSerializer,
     NotebookPageSerializer,
     NotebookPageWindowSerializer,
@@ -68,6 +69,7 @@ class CreateNotebookView(APIView):
 
 class NotebookDetailView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get(self, request, notebook_id):
         page_service = PageService()
@@ -81,6 +83,41 @@ class NotebookDetailView(APIView):
             return _error_response(error)
 
         return Response(NotebookSerializer(notebook).data)
+
+    def patch(self, request, notebook_id):
+        serializer = UpdateNotebookSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        validated = serializer.validated_data
+        notebook_service = NotebookService()
+
+        try:
+            notebook = notebook_service.update_notebook(
+                notebook_id=notebook_id,
+                owner=request.user,
+                title=validated.get('title'),
+                description=validated.get('description'),
+                access=validated.get('access'),
+                thumbnail_file=validated.get('thumbnail'),
+                clear_thumbnail=validated.get('clear_thumbnail', False),
+            )
+        except NotebookServiceError as error:
+            return _error_response(error)
+
+        return Response(NotebookSerializer(notebook).data)
+
+    def delete(self, request, notebook_id):
+        notebook_service = NotebookService()
+
+        try:
+            notebook_service.delete_notebook(
+                notebook_id=notebook_id,
+                owner=request.user,
+            )
+        except NotebookServiceError as error:
+            return _error_response(error)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class NotebookPageWindowView(APIView):
