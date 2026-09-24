@@ -26,11 +26,12 @@ export default function NotebookPageNavControls({
   };
 
   return (
-    <>
+    <div className="notebook-config__page-field">
       <button
         type="button"
-        className="notebook__config-button"
+        className="notebook-config__btn"
         title="Previous page"
+        aria-label="Previous page"
         onClick={onPreviousPage}
         disabled={currentPage <= 1}
       >
@@ -40,8 +41,9 @@ export default function NotebookPageNavControls({
       <input
         type="text"
         inputMode="numeric"
-        className="notebook__config-page-input"
+        className="notebook-config__page-input"
         title="Page number"
+        aria-label="Current page number"
         value={pageInput}
         onChange={(event) => setPageInput(event.target.value)}
         onBlur={commitPageInput}
@@ -53,15 +55,20 @@ export default function NotebookPageNavControls({
         }}
       />
 
+      <span className="notebook-config__page-total" aria-hidden="true">
+        / {totalPages}
+      </span>
+
       <button
         type="button"
-        className="notebook__config-button"
+        className="notebook-config__btn"
         title="Next page"
+        aria-label="Next page"
         onClick={onNextPage}
         disabled={currentPage >= totalPages}
       >
         <MdChevronRight />
       </button>
-    </>
+    </div>
   );
 }

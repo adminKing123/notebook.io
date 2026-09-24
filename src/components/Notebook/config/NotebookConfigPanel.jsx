@@ -1,8 +1,6 @@
-import ConfigDivider from './ConfigDivider';
-import NotebookImageControls from './NotebookImageControls';
-import NotebookPageActionControls from './NotebookPageActionControls';
 import NotebookPageNavControls from './NotebookPageNavControls';
-import NotebookZoomControls from './NotebookZoomControls';
+import NotebookToolsMenu from './NotebookToolsMenu';
+import './config-panel.css';
 
 export default function NotebookConfigPanel({
   currentPage,
@@ -22,7 +20,7 @@ export default function NotebookConfigPanel({
   canZoomOut,
 }) {
   return (
-    <div className="notebook__config-panel">
+    <div className="notebook-config" role="toolbar" aria-label="Notebook tools">
       <NotebookPageNavControls
         currentPage={currentPage}
         totalPages={totalPages}
@@ -31,29 +29,17 @@ export default function NotebookConfigPanel({
         onNextPage={onNextPage}
       />
 
-      <ConfigDivider />
-
-      <NotebookZoomControls
+      <NotebookToolsMenu
         zoom={zoom}
         onZoomIn={onZoomIn}
         onZoomOut={onZoomOut}
         canZoomIn={canZoomIn}
         canZoomOut={canZoomOut}
-      />
-
-      <ConfigDivider />
-
-      <NotebookImageControls
-        onImportImage={onImportImage}
-        onImportExistingImages={onImportExistingImages}
-      />
-
-      <ConfigDivider />
-
-      <NotebookPageActionControls
         onAddPage={onAddPage}
         onRemovePage={onRemovePage}
         canRemovePage={canRemovePage}
+        onImportImage={onImportImage}
+        onImportExistingImages={onImportExistingImages}
       />
     </div>
   );

@@ -2,6 +2,7 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 
 export const DropdownMenu = DropdownMenuPrimitive.Root;
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+export const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
 export function DropdownMenuContent({
   className = '',
@@ -21,10 +22,36 @@ export function DropdownMenuContent({
   );
 }
 
+export function DropdownMenuSubContent({
+  className = '',
+  sideOffset = 8,
+  collisionPadding = 12,
+  ...props
+}) {
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.SubContent
+        sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
+        className={className}
+        {...props}
+      />
+    </DropdownMenuPrimitive.Portal>
+  );
+}
+
 export function DropdownMenuItem({ className = '', ...props }) {
   return <DropdownMenuPrimitive.Item className={className} {...props} />;
 }
 
+export function DropdownMenuSubTrigger({ className = '', ...props }) {
+  return <DropdownMenuPrimitive.SubTrigger className={className} {...props} />;
+}
+
 export function DropdownMenuSeparator({ className = '', ...props }) {
   return <DropdownMenuPrimitive.Separator className={className} {...props} />;
+}
+
+export function DropdownMenuLabel({ className = '', ...props }) {
+  return <DropdownMenuPrimitive.Label className={className} {...props} />;
 }

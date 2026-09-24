@@ -1,0 +1,312 @@
+.notebook-config {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: fit-content;
+  max-width: calc(100% - 1rem);
+  padding: 0.375rem 0.5rem;
+  padding-bottom: max(0.375rem, env(safe-area-inset-bottom, 0px));
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background-color: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+}
+
+.notebook-config__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--color-text-body);
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.notebook-config__btn:hover:not(:disabled) {
+  background-color: rgba(241, 245, 249, 1);
+  color: var(--color-text-primary);
+}
+
+.notebook-config__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.notebook-config__page-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  user-select: none;
+}
+
+.notebook-config__page-input {
+  width: 2.125rem;
+  height: 1.875rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: rgba(248, 250, 252, 0.9);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+}
+
+.notebook-config__page-input:focus {
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.notebook-config__page-total {
+  min-width: 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.notebook-config__menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  background-color: rgba(248, 250, 252, 0.95);
+  color: var(--color-text-body);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.notebook-config__menu-trigger-icon {
+  font-size: 1.25rem;
+}
+
+.notebook-config__menu-trigger:hover,
+.notebook-config__menu-trigger[data-state='open'] {
+  border-color: rgba(96, 165, 250, 0.65);
+  background-color: #ffffff;
+  color: var(--color-text-primary);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+.notebook-config__menu-item-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.notebook-config__menu-item-icon {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+}
+
+.notebook-config__menu-item[data-highlighted] .notebook-config__menu-item-icon {
+  color: var(--color-text-body);
+}
+
+.notebook-config__menu-item--danger .notebook-config__menu-item-icon {
+  color: #b91c1c;
+}
+
+.notebook-config__menu {
+  z-index: 120;
+  min-width: 13.5rem;
+  padding: 0.375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.notebook-config__submenu {
+  min-width: 11.5rem;
+}
+
+.notebook-config__menu-zoom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  padding: 0.4375rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.notebook-config__menu-zoom-label {
+  color: var(--color-text-body);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.notebook-config__menu-zoom-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.notebook-config__menu-zoom-value {
+  min-width: 2.75rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.notebook-config__menu-zoom-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-body);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.notebook-config__menu-zoom-btn:hover:not(:disabled) {
+  border-color: rgba(96, 165, 250, 0.65);
+  background-color: rgba(241, 245, 249, 0.95);
+}
+
+.notebook-config__menu-zoom-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.notebook-config__submenu-trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5625rem 0.5rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-body);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.notebook-config__submenu-trigger[data-highlighted],
+.notebook-config__submenu-trigger[data-state='open'] {
+  background-color: rgba(241, 245, 249, 0.9);
+  color: var(--color-text-primary);
+}
+
+.notebook-config__submenu-trigger-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.notebook-config__submenu-chevron {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+}
+
+.notebook-config__menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.5625rem 0.5rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-body);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.notebook-config__menu-item[data-highlighted] {
+  background-color: rgba(241, 245, 249, 0.9);
+  color: var(--color-text-primary);
+}
+
+.notebook-config__menu-item[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.notebook-config__menu-item--danger {
+  color: #b91c1c;
+}
+
+.notebook-config__menu-item--danger[data-highlighted] {
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.notebook-config__menu-separator {
+  height: 1px;
+  margin: 0.25rem 0;
+  background-color: var(--color-border);
+}
+
+.notebook-config__file-input {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .notebook-config {
+    border-radius: 0.625rem 0.625rem 0 0;
+    padding-inline: 0.5rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .notebook-config__btn {
+    width: 2.375rem;
+    height: 2.375rem;
+  }
+
+  .notebook-config__menu-trigger {
+    width: 2.375rem;
+    height: 2.375rem;
+  }
+
+  .notebook-config__menu-item {
+    padding: 0.6875rem 0.5rem;
+  }
+}
