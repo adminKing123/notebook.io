@@ -45,7 +45,7 @@ class NotebookPageSerializer(serializers.ModelSerializer):
 class SaveNotebookPageSerializer(serializers.Serializer):
     heading = serializers.CharField(required=False, allow_blank=True, max_length=255)
     subheading = serializers.CharField(required=False, allow_blank=True, max_length=255)
-    content = serializers.CharField(required=False, allow_blank=True)
+    content = serializers.CharField(required=False, allow_blank=True, trim_whitespace=False)
     config = PageConfigWriteSerializer(required=False)
 
 
