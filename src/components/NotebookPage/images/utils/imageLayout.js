@@ -21,3 +21,15 @@ export function createDefaultImageLayout(aspectRatio) {
     aspectRatio,
   };
 }
+
+export function createStaggeredImageLayout(aspectRatio, index) {
+  const layout = createDefaultImageLayout(aspectRatio);
+  const column = index % 3;
+  const row = Math.floor(index / 3);
+
+  return {
+    ...layout,
+    x: Math.min(85, layout.x + column * 4),
+    y: Math.min(75, layout.y + row * 10),
+  };
+}

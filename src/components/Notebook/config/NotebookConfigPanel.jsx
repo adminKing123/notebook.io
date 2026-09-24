@@ -16,6 +16,7 @@ export default function NotebookConfigPanel({
   onAddPage,
   onRemovePage,
   onImportImage,
+  onImportExistingImages,
   onDeleteSelectedImage,
   canRemovePage,
   canZoomIn,
@@ -46,6 +47,7 @@ export default function NotebookConfigPanel({
 
       <NotebookImageControls
         onImportImage={onImportImage}
+        onImportExistingImages={onImportExistingImages}
         onDeleteSelectedImage={onDeleteSelectedImage}
         canDeleteSelectedImage={canDeleteSelectedImage}
       />

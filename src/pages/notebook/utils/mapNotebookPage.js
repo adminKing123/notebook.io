@@ -1,13 +1,14 @@
 import { contentLinesToText, parseApiContent } from './pageContent';
 
-export function mapEmbeddedImage(image) {
+export function mapEmbeddedImage(embedded) {
   return {
-    id: image.image_id ?? image.id,
-    src: image.url,
-    x: image.x,
-    y: image.y,
-    width: image.width,
-    aspectRatio: image.aspect_ratio,
+    id: embedded.id,
+    imageId: embedded.image_id,
+    src: embedded.url,
+    x: embedded.x,
+    y: embedded.y,
+    width: embedded.width,
+    aspectRatio: embedded.aspect_ratio,
   };
 }
 
@@ -68,13 +69,16 @@ export function serializePageForSave(page) {
     subheading: page.subtitle ?? '',
     content: contentLinesToText(page.content),
     config: {
-      embedded_images: (page.images ?? []).map((image) => ({
-        image_id: image.id,
-        x: image.x,
-        y: image.y,
-        width: image.width,
-        aspect_ratio: image.aspectRatio,
-      })),
+      embedded_images: (page.images ?? [])
+        .filter((image) => image.imageId && !image.uploading)
+        .map((image) => ({
+          id: image.id,
+          image_id: image.imageId,
+          x: image.x,
+          y: image.y,
+          width: image.width,
+          aspect_ratio: image.aspectRatio,
+        })),
     },
   };
 }

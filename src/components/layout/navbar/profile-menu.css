@@ -31,7 +31,7 @@
 }
 
 .app-profile-menu__trigger:hover .app-profile-menu__avatar,
-.app-profile-menu__trigger[aria-expanded='true'] .app-profile-menu__avatar {
+.app-profile-menu__trigger[data-state='open'] .app-profile-menu__avatar {
   border-color: var(--color-border-focus);
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
@@ -43,10 +43,7 @@
 }
 
 .app-profile-menu__dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  z-index: 20;
+  z-index: 120;
   width: 14rem;
   padding: 0.5rem;
   border: 1px solid var(--color-border);
@@ -114,12 +111,19 @@
   font-weight: 500;
   text-align: left;
   cursor: pointer;
+  outline: none;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.app-profile-menu__item:hover {
+.app-profile-menu__item[data-highlighted] {
   background-color: rgba(241, 245, 249, 0.8);
   color: var(--color-text-primary);
+}
+
+.app-profile-menu__divider-line {
+  height: 1px;
+  margin: 0.375rem 0;
+  background-color: var(--color-border);
 }
 
 .app-profile-menu__item--logout {

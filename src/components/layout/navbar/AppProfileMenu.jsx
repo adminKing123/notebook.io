@@ -1,37 +1,43 @@
 import { Fragment } from 'react';
 import { useAuth } from '../../../auth/AuthContext';
-import { useDropdownMenu } from '../hooks/useDropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../../ui/DropdownMenu';
 import { PROFILE_MENU_SECTIONS } from '../constants';
 import ProfileAvatar from './ProfileAvatar';
 import './profile-menu.css';
 
 export default function AppProfileMenu() {
   const { user, logout } = useAuth();
-  const { isOpen, containerRef, toggle, close } = useDropdownMenu();
 
   const handleMenuItemClick = (item) => {
     if (item.id === 'logout') {
       logout();
     }
-
-    close();
   };
 
   return (
-    <div className="app-profile-menu" ref={containerRef}>
-      <button
-        type="button"
-        className="app-profile-menu__trigger"
-        aria-label="Open profile menu"
-        aria-expanded={isOpen}
-        aria-haspopup="menu"
-        onClick={toggle}
-      >
-        <ProfileAvatar fullName={user?.full_name} />
-      </button>
+    <DropdownMenu modal={false}>
+      <div className="app-profile-menu">
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="app-profile-menu__trigger"
+            aria-label="Open profile menu"
+          >
+            <ProfileAvatar fullName={user?.full_name} />
+          </button>
+        </DropdownMenuTrigger>
 
-      {isOpen && (
-        <div className="app-profile-menu__dropdown" role="menu">
+        <DropdownMenuContent
+          className="app-profile-menu__dropdown"
+          sideOffset={8}
+          align="end"
+        >
           <div className="app-profile-menu__header">
             <ProfileAvatar fullName={user?.full_name} size="large" />
             <div className="app-profile-menu__identity">
@@ -40,31 +46,30 @@ export default function AppProfileMenu() {
             </div>
           </div>
 
-          <ul className="app-profile-menu__list">
+          <div className="app-profile-menu__list">
             {PROFILE_MENU_SECTIONS.map((section, sectionIndex) => (
               <Fragment key={sectionIndex}>
                 {sectionIndex > 0 && (
-                  <li className="app-profile-menu__divider" role="separator" />
+                  <DropdownMenuSeparator className="app-profile-menu__divider-line" />
                 )}
                 {section.map((item) => (
-                  <li key={item.id} role="none">
-                    <button
-                      type="button"
-                      className={`app-profile-menu__item${
-                        item.variant === 'logout' ? ' app-profile-menu__item--logout' : ''
-                      }`}
-                      role="menuitem"
-                      onClick={() => handleMenuItemClick(item)}
-                    >
-                      {item.label}
-                    </button>
-                  </li>
+                  <DropdownMenuItem
+                    key={item.id}
+                    className={
+                      item.variant === 'logout'
+                        ? 'app-profile-menu__item app-profile-menu__item--logout'
+                        : 'app-profile-menu__item'
+                    }
+                    onSelect={() => handleMenuItemClick(item)}
+                  >
+                    {item.label}
+                  </DropdownMenuItem>
                 ))}
               </Fragment>
             ))}
-          </ul>
-        </div>
-      )}
-    </div>
+          </div>
+        </DropdownMenuContent>
+      </div>
+    </DropdownMenu>
   );
 }

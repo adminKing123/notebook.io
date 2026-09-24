@@ -18,6 +18,7 @@ export default function NotebookPage() {
     handleContentChange,
     handleUpdateImage,
     handleImportImage,
+    handleImportExistingImages,
     handleDeleteImage,
     handleAddPage,
     handleRemovePage,
@@ -64,6 +65,7 @@ export default function NotebookPage() {
         onPageIndexChange={handlePageIndexChange}
         onContentChange={handleContentChange}
         onImportImage={handleImportImage}
+        onImportExistingImages={handleImportExistingImages}
         onUpdateImage={handleUpdateImage}
         onDeleteImage={handleDeleteImage}
         onAddPageRequest={handleAddPage}

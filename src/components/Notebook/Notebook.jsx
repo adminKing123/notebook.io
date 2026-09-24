@@ -15,6 +15,7 @@ export default function Notebook({
   onPageIndexChange,
   onContentChange,
   onImportImage,
+  onImportExistingImages,
   onUpdateImage,
   onDeleteImage,
   onAddPageRequest,
@@ -73,6 +74,22 @@ export default function Notebook({
       }
     },
     [currentPageIndex, isAnimatingRef, onImportImage],
+  );
+
+  const importExistingImages = useCallback(
+    async (images) => {
+      if (isAnimatingRef.current || !images?.length) {
+        return;
+      }
+
+      if (onImportExistingImages) {
+        const imageId = await onImportExistingImages(currentPageIndex, images);
+        if (imageId) {
+          setSelectedImageId(imageId);
+        }
+      }
+    },
+    [currentPageIndex, isAnimatingRef, onImportExistingImages],
   );
 
   const updatePageImage = useCallback(
@@ -165,6 +182,7 @@ export default function Notebook({
         onAddPage={addPage}
         onRemovePage={removePage}
         onImportImage={importImage}
+        onImportExistingImages={importExistingImages}
         onDeleteSelectedImage={deleteSelectedImage}
         canRemovePage={totalPages > 1}
         canZoomIn={canZoomIn}

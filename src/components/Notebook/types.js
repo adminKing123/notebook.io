@@ -1,6 +1,7 @@
 /**
  * @typedef {object} NotebookPageImage
  * @property {string} id
+ * @property {string} imageId
  * @property {string} src
  * @property {number} x
  * @property {number} y

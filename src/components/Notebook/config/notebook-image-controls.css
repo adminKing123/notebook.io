@@ -1,0 +1,31 @@
+.notebook-image-menu {
+  z-index: 120;
+  min-width: 11rem;
+  padding: 0.375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.notebook-image-menu__item {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 0.5rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-body);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.notebook-image-menu__item[data-highlighted] {
+  background-color: rgba(241, 245, 249, 0.9);
+  color: var(--color-text-primary);
+}

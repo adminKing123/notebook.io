@@ -8,7 +8,10 @@ import {
   saveNotebookPage,
   uploadNotebookPageImage,
 } from '../../../api/notebookPages';
-import { createDefaultImageLayout } from '../../../components/NotebookPage/images/utils/imageLayout';
+import {
+  createDefaultImageLayout,
+  createStaggeredImageLayout,
+} from '../../../components/NotebookPage/images/utils/imageLayout';
 import {
   loadImageFromFile,
   revokeImageSrc,
@@ -18,7 +21,6 @@ import { AUTOSAVE_DEBOUNCE_MS, PAGE_WINDOW_SIZE } from '../constants';
 import { contentLinesToText } from '../utils/pageContent';
 import {
   mapApiPage,
-  mapEmbeddedImage,
   mergePageWindow,
   serializePageForSave,
 } from '../utils/mapNotebookPage';
@@ -216,7 +218,7 @@ export function useNotebookEditor(notebookId) {
                   ...currentPage,
                   images: [
                     ...currentPage.images,
-                    { id: tempId, src, ...layout, uploading: true },
+                    { id: tempId, imageId: null, src, ...layout, uploading: true },
                   ],
                 }
               : currentPage,
@@ -231,7 +233,9 @@ export function useNotebookEditor(notebookId) {
           images: pagesRef.current[pageIndex].images
             .filter((image) => image.id !== tempId)
             .concat({
-              ...mapEmbeddedImage(uploadedImage),
+              id: tempId,
+              imageId: uploadedImage.id,
+              src: uploadedImage.url,
               ...layout,
             }),
         };
@@ -242,13 +246,53 @@ export function useNotebookEditor(notebookId) {
         setPages(pagesRef.current);
 
         scheduleSave(pageWithUploadedImage);
-        return uploadedImage.id;
+        return tempId;
       } catch (requestError) {
         setError(requestError.message);
         return null;
       }
     },
     [notebookId, scheduleSave],
+  );
+
+  const handleImportExistingImages = useCallback(
+    async (pageIndex, apiImages) => {
+      const page = pagesRef.current[pageIndex];
+      if (!page?.id || page.loading || !Array.isArray(apiImages) || apiImages.length === 0) {
+        return null;
+      }
+
+      try {
+        const newImages = apiImages.map((apiImage, index) => {
+          const aspectRatio = apiImage.aspect_ratio > 0 ? apiImage.aspect_ratio : 1;
+          const layout = createStaggeredImageLayout(aspectRatio, index);
+
+          return {
+            id: createPageId(),
+            imageId: apiImage.id,
+            src: apiImage.url,
+            ...layout,
+          };
+        });
+
+        const updatedPage = {
+          ...page,
+          images: [...page.images, ...newImages],
+        };
+
+        pagesRef.current = pagesRef.current.map((currentPage, index) =>
+          index === pageIndex ? updatedPage : currentPage,
+        );
+        setPages(pagesRef.current);
+        scheduleSave(updatedPage);
+
+        return newImages[newImages.length - 1]?.id ?? null;
+      } catch (requestError) {
+        setError(requestError.message);
+        return null;
+      }
+    },
+    [scheduleSave],
   );
 
   const handleDeleteImage = useCallback(
@@ -331,6 +375,7 @@ export function useNotebookEditor(notebookId) {
     handleContentChange,
     handleUpdateImage,
     handleImportImage,
+    handleImportExistingImages,
     handleDeleteImage,
     handleAddPage,
     handleRemovePage,
