@@ -1,4 +1,17 @@
+import uuid
+
 from notebooks.models import Image, default_page_config
+
+
+def _placement_id(item: dict) -> str:
+    raw_id = item.get('id')
+    if raw_id:
+        try:
+            return str(uuid.UUID(str(raw_id)))
+        except (ValueError, TypeError, AttributeError):
+            pass
+
+    return str(uuid.uuid4())
 
 
 def sanitize_page_config(config, *, owner) -> dict:
@@ -29,6 +42,7 @@ def sanitize_page_config(config, *, owner) -> dict:
             continue
 
         sanitized_embedded.append({
+            'id': _placement_id(item),
             'image_id': image_id,
             'x': float(item.get('x', 0)),
             'y': float(item.get('y', 0)),
@@ -67,14 +81,18 @@ def resolve_page_config(page) -> dict:
         if image is None:
             continue
 
+        stored_aspect_ratio = float(item.get('aspect_ratio', 0))
+        aspect_ratio = stored_aspect_ratio if stored_aspect_ratio > 0 else float(image.aspect_ratio or 1)
+
         resolved_embedded.append({
+            'id': _placement_id(item),
             'image_id': str(image.id),
             'url': image.url,
             'file_name': image.file_name,
             'x': float(item.get('x', 0)),
             'y': float(item.get('y', 0)),
             'width': float(item.get('width', 30)),
-            'aspect_ratio': float(item.get('aspect_ratio', 1)),
+            'aspect_ratio': aspect_ratio,
         })
 
     return {'embedded_images': resolved_embedded}

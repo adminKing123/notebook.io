@@ -7,10 +7,11 @@ from notebooks.utils.page_config import resolve_page_config
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = ['id', 'url', 'file_name']
+        fields = ['id', 'url', 'file_name', 'width', 'height', 'aspect_ratio']
 
 
 class EmbeddedImageWriteSerializer(serializers.Serializer):
+    id = serializers.UUIDField(required=False)
     image_id = serializers.UUIDField()
     x = serializers.FloatField(required=False)
     y = serializers.FloatField(required=False)

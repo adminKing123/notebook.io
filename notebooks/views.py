@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from notebooks.constants import DEFAULT_PAGE_WINDOW_SIZE
-from notebooks.models import Notebook
+from notebooks.models import Image, Notebook
 from notebooks.serializers import (
     CreateNotebookSerializer,
     ImageSerializer,
@@ -171,6 +171,33 @@ class NotebookPageDetailView(APIView):
             return _error_response(error)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserImagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            page = max(int(request.query_params.get('page', 1)), 1)
+            page_size = min(max(int(request.query_params.get('page_size', 24)), 1), 48)
+        except ValueError:
+            return Response(
+                {'detail': 'Invalid pagination parameters.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        images = Image.objects.filter(owner=request.user).order_by('-created_at')
+        total = images.count()
+        offset = (page - 1) * page_size
+        page_images = images[offset:offset + page_size]
+
+        return Response({
+            'total': total,
+            'page': page,
+            'page_size': page_size,
+            'has_more': offset + page_size < total,
+            'results': ImageSerializer(page_images, many=True).data,
+        })
 
 
 class NotebookPageImageUploadView(APIView):

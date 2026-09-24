@@ -7,10 +7,12 @@ from notebooks.views import (
     NotebookPageImageUploadView,
     NotebookPageWindowView,
     RecentNotebooksView,
+    UserImagesView,
 )
 
 urlpatterns = [
     path('recent/', RecentNotebooksView.as_view(), name='notebooks-recent'),
+    path('images/', UserImagesView.as_view(), name='user-images'),
     path('', CreateNotebookView.as_view(), name='notebooks-create'),
     path('<uuid:notebook_id>/', NotebookDetailView.as_view(), name='notebook-detail'),
     path(
