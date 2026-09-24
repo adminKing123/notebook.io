@@ -15,9 +15,3 @@ export const CREATE_NOTEBOOK_CARD = {
   description: 'Start a fresh notebook for your thoughts and ideas.',
   footerLabel: 'New',
 };
-
-export const NOTEBOOK_INFO_FIELDS = [
-  { id: 'created', label: 'Created', key: 'createdAt', type: 'datetime' },
-  { id: 'updated', label: 'Last updated', key: 'lastUpdatedAt', type: 'datetime' },
-  { id: 'owner', label: 'Owned by', key: 'ownedBy', type: 'text' },
-];

@@ -97,7 +97,7 @@
   height: 1.5rem;
 }
 
-.notebook-card-info__trigger {
+.notebook-card-menu__trigger {
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -114,74 +114,195 @@
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-.notebook-card-info__trigger:hover,
-.notebook-card-info__trigger:focus-visible {
+.notebook-card-menu__trigger:hover,
+.notebook-card-menu__trigger:focus-visible,
+.notebook-card-menu__trigger[data-state='open'] {
   color: var(--color-text-primary);
   background-color: rgba(241, 245, 249, 0.9);
   outline: none;
 }
 
-.notebook-card-info__tooltip {
+.notebook-card-menu__dropdown {
   z-index: 50;
-  width: min(16rem, calc(100vw - 2rem));
-  padding: 0.75rem;
+  min-width: 11.5rem;
+  padding: 0.375rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background-color: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
-  font-family: var(--font-mono);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
 }
 
-.notebook-card-info__details {
-  display: grid;
+.notebook-card-menu__item {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
-  margin: 0;
-}
-
-.notebook-card-info__detail {
-  display: grid;
-  gap: 0.125rem;
-}
-
-.notebook-card-info__detail dt {
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.notebook-card-info__detail dd {
-  margin: 0;
+  padding: 0.4375rem 0.5rem;
+  border-radius: var(--radius-sm);
   color: var(--color-text-body);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.45;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  outline: none;
 }
 
-.notebook-card-info__description {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
+.notebook-card-menu__item[data-highlighted] {
+  background-color: rgba(241, 245, 249, 0.95);
+  color: var(--color-text-primary);
 }
 
-.notebook-card-info__description-label {
+.notebook-card-menu__item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notebook-card-menu__item-icon {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+}
+
+.notebook-card-menu__item[data-highlighted] .notebook-card-menu__item-icon {
+  color: var(--color-text-primary);
+}
+
+.notebook-card-menu__item--danger {
+  color: #b91c1c;
+}
+
+.notebook-card-menu__item--danger[data-highlighted] {
+  background-color: rgba(254, 226, 226, 0.65);
+  color: #991b1b;
+}
+
+.notebook-card-menu__item--danger .notebook-card-menu__item-icon {
+  color: #b91c1c;
+}
+
+.notebook-edit-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 210;
+  display: flex;
+  flex-direction: column;
+  width: min(32rem, calc(100vw - 2rem));
+  max-height: min(40rem, calc(100vh - 2rem));
+  padding: 1.25rem;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+  transform: translate(-50%, -50%);
+}
+
+.notebook-edit-dialog__header {
+  padding-right: 2rem;
+}
+
+.notebook-edit-dialog__title {
   margin: 0 0 0.375rem;
-  color: var(--color-text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  line-height: 1.35;
 }
 
-.notebook-card-info__description-text {
+.notebook-edit-dialog__description {
+  margin: 0 0 1rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.notebook-edit-dialog .auth__progress {
+  margin-bottom: 1.25rem;
+}
+
+.notebook-edit-dialog__body {
+  min-width: 0;
+}
+
+.notebook-delete-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 210;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+  transform: translate(-50%, -50%);
+}
+
+.notebook-delete-dialog__title {
+  margin: 0 2rem 0.5rem 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.notebook-delete-dialog__description {
   margin: 0;
   color: var(--color-text-body);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   line-height: 1.55;
+}
+
+.notebook-delete-dialog__error {
+  margin: 0.875rem 0 0;
+  color: #b91c1c;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.notebook-delete-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.notebook-delete-dialog__button {
+  padding: 0.4375rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.notebook-delete-dialog__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.notebook-delete-dialog__button--secondary {
+  background-color: transparent;
+  color: var(--color-text-body);
+}
+
+.notebook-delete-dialog__button--secondary:hover:not(:disabled) {
+  background-color: rgba(241, 245, 249, 0.9);
+}
+
+.notebook-delete-dialog__button--danger {
+  border-color: #b91c1c;
+  background-color: #b91c1c;
+  color: #fff;
+}
+
+.notebook-delete-dialog__button--danger:hover:not(:disabled) {
+  border-color: #991b1b;
+  background-color: #991b1b;
 }
 
 .notebook-card__thumbnail {
@@ -192,7 +313,8 @@
 .notebook-card__thumbnail-sheet {
   position: relative;
   overflow: hidden;
-  height: 7.5rem;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background-color: var(--color-page-bg);
@@ -341,10 +463,6 @@
     gap: 0.75rem;
   }
 
-  .notebook-card__thumbnail-sheet {
-    height: 5.5rem;
-  }
-
   .notebook-card__body {
     gap: 0.5rem;
     padding: 0.75rem;
@@ -381,10 +499,6 @@
     padding: 0.625rem 0.625rem 0;
   }
 
-  .notebook-card__thumbnail-sheet {
-    height: 4.5rem;
-  }
-
   .notebook-card__thumbnail-lines {
     gap: 0.625rem;
     padding: 0.75rem 0.5rem 0 22%;
@@ -397,11 +511,6 @@
 
   .notebook-card__footer {
     padding: 0 0.625rem 0.625rem;
-  }
-
-  .notebook-card-info__tooltip {
-    width: min(14rem, calc(100vw - 1.75rem));
-    padding: 0.625rem;
   }
 
   .notebook-card__title {

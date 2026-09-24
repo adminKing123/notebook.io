@@ -5,7 +5,8 @@ import { useRecentNotebooks } from '../hooks/useRecentNotebooks';
 import './dashboard-notebooks.css';
 
 export default function DashboardNotebooksSection() {
-  const { notebooks, isLoading, error } = useRecentNotebooks();
+  const { notebooks, isLoading, error, removeNotebook, replaceNotebook } =
+    useRecentNotebooks();
 
   return (
     <section className="dashboard-notebooks">
@@ -32,7 +33,13 @@ export default function DashboardNotebooksSection() {
           </p>
         )}
 
-        {!isLoading && !error && <NotebookCardsGrid notebooks={notebooks} />}
+        {!isLoading && !error && (
+          <NotebookCardsGrid
+            notebooks={notebooks}
+            onNotebookDeleted={removeNotebook}
+            onNotebookUpdated={replaceNotebook}
+          />
+        )}
       </div>
     </section>
   );

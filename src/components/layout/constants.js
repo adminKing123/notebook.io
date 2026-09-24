@@ -1,5 +1,3 @@
-export const APP_BRAND = 'Personal Diary';
-
 export const PROFILE_MENU_SECTIONS = [
   [
     { id: 'settings', label: 'Settings' },

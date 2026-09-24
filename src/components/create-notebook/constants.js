@@ -47,6 +47,6 @@ export const CREATE_NOTEBOOK_STEP_CONTENT = {
   },
   [CREATE_NOTEBOOK_STEPS.THUMBNAIL]: {
     title: 'Add a thumbnail',
-    description: 'Upload a cover image and preview how it will appear.',
+    description: 'Upload an optional cover image for your notebook.',
   },
 };

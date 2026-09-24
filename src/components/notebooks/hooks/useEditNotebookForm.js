@@ -1,20 +1,29 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createNotebook } from '../../../api/notebooks';
+import { updateNotebook } from '../../../api/notebooks';
 import { useAuthFormMessages } from '../../auth/shared/hooks/useAuthFormMessages';
 import { useStepForm } from '../../auth/shared/hooks/useStepForm';
-import { ROUTES } from '../../../routes';
 import {
   CREATE_NOTEBOOK_STEP_COUNT,
   CREATE_NOTEBOOK_STEPS,
   INITIAL_CREATE_NOTEBOOK_FORM,
-} from '../constants';
-import { validateNotebookDetails } from '../validation';
+} from '../../create-notebook/constants';
+import { validateNotebookDetails } from '../../create-notebook/validation';
+import { NOTEBOOK_ACCESS } from '../constants';
 
-export function useCreateNotebookForm() {
-  const navigate = useNavigate();
+function notebookToInitialForm(notebook) {
+  return {
+    ...INITIAL_CREATE_NOTEBOOK_FORM,
+    title: notebook.title ?? '',
+    description: notebook.description ?? '',
+    access: notebook.access ?? NOTEBOOK_ACCESS.PRIVATE,
+    thumbnailPreview: notebook.thumbnailUrl ?? '',
+    clearThumbnail: false,
+  };
+}
+
+export function useEditNotebookForm({ notebook, onSuccess, onCancel }) {
   const stepForm = useStepForm({
-    initialForm: INITIAL_CREATE_NOTEBOOK_FORM,
+    initialForm: notebookToInitialForm(notebook),
     stepCount: CREATE_NOTEBOOK_STEP_COUNT,
     initialStep: CREATE_NOTEBOOK_STEPS.DETAILS,
   });
@@ -22,14 +31,31 @@ export function useCreateNotebookForm() {
 
   const updateThumbnail = useCallback(
     (file) => {
-      if (stepForm.formData.thumbnailPreview) {
-        URL.revokeObjectURL(stepForm.formData.thumbnailPreview);
+      const previousPreview = stepForm.formData.thumbnailPreview;
+
+      if (previousPreview.startsWith('blob:')) {
+        URL.revokeObjectURL(previousPreview);
       }
 
-      stepForm.updateField('thumbnailFile', file);
-      stepForm.updateField('thumbnailPreview', file ? URL.createObjectURL(file) : '');
+      if (file) {
+        stepForm.updateField('thumbnailFile', file);
+        stepForm.updateField('thumbnailPreview', URL.createObjectURL(file));
+        stepForm.updateField('clearThumbnail', false);
+        return;
+      }
+
+      if (stepForm.formData.thumbnailFile) {
+        stepForm.updateField('thumbnailFile', null);
+        stepForm.updateField('thumbnailPreview', notebook.thumbnailUrl ?? '');
+        stepForm.updateField('clearThumbnail', false);
+        return;
+      }
+
+      stepForm.updateField('thumbnailFile', null);
+      stepForm.updateField('thumbnailPreview', '');
+      stepForm.updateField('clearThumbnail', Boolean(notebook.thumbnailUrl));
     },
-    [stepForm],
+    [notebook.thumbnailUrl, stepForm],
   );
 
   const handleDetailsContinue = useCallback(() => {
@@ -54,30 +80,31 @@ export function useCreateNotebookForm() {
     setIsSubmitting(true);
 
     try {
-      await createNotebook({
+      const updatedNotebook = await updateNotebook(notebook.id, {
         title: stepForm.formData.title,
         description: stepForm.formData.description,
         access: stepForm.formData.access,
         thumbnailFile: stepForm.formData.thumbnailFile,
+        clearThumbnail: stepForm.formData.clearThumbnail,
       });
-      navigate(ROUTES.DASHBOARD);
+      onSuccess?.(updatedNotebook);
     } catch (requestError) {
       setError(requestError.message);
     } finally {
       setIsSubmitting(false);
     }
-  }, [clearMessages, navigate, setError, setIsSubmitting, stepForm.formData]);
+  }, [clearMessages, notebook.id, onSuccess, setError, setIsSubmitting, stepForm.formData]);
 
   const handleBack = useCallback(() => {
     clearMessages();
 
     if (stepForm.isFirstStep) {
-      navigate(ROUTES.DASHBOARD);
+      onCancel?.();
       return;
     }
 
     stepForm.goBack();
-  }, [clearMessages, navigate, stepForm]);
+  }, [clearMessages, onCancel, stepForm]);
 
   return {
     currentStep: stepForm.currentStep,

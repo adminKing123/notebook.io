@@ -25,9 +25,25 @@ export function useRecentNotebooks() {
     loadNotebooks();
   }, [loadNotebooks]);
 
+  const removeNotebook = useCallback((notebookId) => {
+    setNotebooks((previousNotebooks) =>
+      previousNotebooks.filter((notebook) => notebook.id !== notebookId),
+    );
+  }, []);
+
+  const replaceNotebook = useCallback((updatedNotebook) => {
+    setNotebooks((previousNotebooks) =>
+      previousNotebooks.map((notebook) =>
+        notebook.id === updatedNotebook.id ? updatedNotebook : notebook,
+      ),
+    );
+  }, []);
+
   return {
     notebooks,
     isLoading,
     error,
+    removeNotebook,
+    replaceNotebook,
   };
 }

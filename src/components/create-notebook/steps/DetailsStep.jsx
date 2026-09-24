@@ -7,6 +7,8 @@ import TextField from '../../ui/TextField';
 export default function DetailsStep({
   formData,
   updateField,
+  onBack,
+  backLabel = 'Back',
   onContinue,
   error = '',
 }) {
@@ -32,7 +34,13 @@ export default function DetailsStep({
         rows={4}
       />
 
-      <FormActions continueLabel="Continue" continueType="submit" onContinue={onContinue} />
+      <FormActions
+        onBack={onBack}
+        backLabel={backLabel}
+        continueLabel="Continue"
+        continueType="submit"
+        onContinue={onContinue}
+      />
     </AuthForm>
   );
 }

@@ -1,0 +1,36 @@
+.app-brand--navbar {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+}
+
+.app-brand__mark-picture {
+  display: flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.app-brand--navbar .app-brand__mark {
+  display: block;
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.app-brand--navbar .app-brand__name {
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.app-brand--auth {
+  margin: 0 0 0.75rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

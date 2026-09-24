@@ -3,10 +3,10 @@ import { notebookRoute } from '../../routes';
 import { formatPageCount } from '../../utils/notebookDisplay';
 import NotebookAccessBadge from './NotebookAccessBadge';
 import NotebookCardFooter from './NotebookCardFooter';
-import NotebookCardInfo from './NotebookCardInfo';
+import NotebookCardMenu from './NotebookCardMenu';
 import NotebookCardThumbnail from './NotebookCardThumbnail';
 
-export default function NotebookCard({ notebook }) {
+export default function NotebookCard({ notebook, onNotebookDeleted, onNotebookUpdated }) {
   return (
     <div className="notebook-card">
       <Link to={notebookRoute(notebook.id)} className="notebook-card__main">
@@ -24,7 +24,13 @@ export default function NotebookCard({ notebook }) {
 
       <NotebookCardFooter
         label={formatPageCount(notebook.pageCount)}
-        action={<NotebookCardInfo notebook={notebook} />}
+        action={
+          <NotebookCardMenu
+            notebook={notebook}
+            onDeleted={onNotebookDeleted}
+            onUpdated={onNotebookUpdated}
+          />
+        }
       />
     </div>
   );

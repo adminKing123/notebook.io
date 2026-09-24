@@ -8,9 +8,6 @@ function mapNotebook(notebook) {
     pageCount: notebook.page_count,
     access: notebook.access,
     thumbnailUrl: notebook.thumbnail_url,
-    createdAt: notebook.created_at,
-    lastUpdatedAt: notebook.updated_at,
-    ownedBy: notebook.owned_by,
   };
 }
 
@@ -31,6 +28,38 @@ export async function createNotebook({ title, description, access, thumbnailFile
 
   const data = await apiRequest('/notebooks/', {
     method: 'POST',
+    body: formData,
+  });
+
+  return mapNotebook(data);
+}
+
+export async function deleteNotebook(notebookId) {
+  return apiRequest(`/notebooks/${notebookId}/`, {
+    method: 'DELETE',
+  });
+}
+
+export async function updateNotebook(
+  notebookId,
+  { title, description, access, thumbnailFile, clearThumbnail },
+) {
+  const formData = new FormData();
+
+  formData.append('title', title.trim());
+  formData.append('description', description.trim());
+  formData.append('access', access);
+
+  if (thumbnailFile) {
+    formData.append('thumbnail', thumbnailFile);
+  }
+
+  if (clearThumbnail) {
+    formData.append('clear_thumbnail', 'true');
+  }
+
+  const data = await apiRequest(`/notebooks/${notebookId}/`, {
+    method: 'PATCH',
     body: formData,
   });
 
