@@ -10,6 +10,10 @@ class NotebookAccess(models.TextChoices):
     SHARED = 'shared', 'Shared'
 
 
+def default_page_config():
+    return {'embedded_images': []}
+
+
 class Notebook(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(
@@ -50,6 +54,7 @@ class NotebookPage(models.Model):
     heading = models.CharField(max_length=255, blank=True)
     subheading = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=True, default='')
+    config = models.JSONField(default=default_page_config, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -69,23 +74,23 @@ class NotebookPage(models.Model):
         return f'{self.notebook.title} · page {self.page_number}'
 
 
-class NotebookPageImage(models.Model):
+class Image(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    page = models.ForeignKey(
-        NotebookPage,
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='images',
+        related_name='notebook_images',
     )
     url = models.URLField()
-    x = models.FloatField(default=0)
-    y = models.FloatField(default=0)
-    width = models.FloatField(default=30)
-    aspect_ratio = models.FloatField(default=1)
+    file_name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['owner', '-created_at']),
+        ]
 
     def __str__(self):
-        return f'Image {self.id} on page {self.page.page_number}'
+        return self.file_name

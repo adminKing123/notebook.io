@@ -1,25 +1,29 @@
 from rest_framework import serializers
 
-from notebooks.models import Notebook, NotebookAccess, NotebookPage, NotebookPageImage
+from notebooks.models import Image, Notebook, NotebookAccess, NotebookPage
+from notebooks.utils.page_config import resolve_page_config
 
 
-class NotebookPageImageSerializer(serializers.ModelSerializer):
+class ImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NotebookPageImage
-        fields = ['id', 'url', 'x', 'y', 'width', 'aspect_ratio']
+        model = Image
+        fields = ['id', 'url', 'file_name']
 
 
-class NotebookPageImageWriteSerializer(serializers.Serializer):
-    id = serializers.UUIDField(required=False)
-    url = serializers.URLField(required=False, allow_blank=True)
+class EmbeddedImageWriteSerializer(serializers.Serializer):
+    image_id = serializers.UUIDField()
     x = serializers.FloatField(required=False)
     y = serializers.FloatField(required=False)
     width = serializers.FloatField(required=False)
     aspect_ratio = serializers.FloatField(required=False)
 
 
+class PageConfigWriteSerializer(serializers.Serializer):
+    embedded_images = EmbeddedImageWriteSerializer(many=True, required=False)
+
+
 class NotebookPageSerializer(serializers.ModelSerializer):
-    images = NotebookPageImageSerializer(many=True, read_only=True)
+    config = serializers.SerializerMethodField()
 
     class Meta:
         model = NotebookPage
@@ -29,16 +33,19 @@ class NotebookPageSerializer(serializers.ModelSerializer):
             'heading',
             'subheading',
             'content',
-            'images',
+            'config',
             'updated_at',
         ]
+
+    def get_config(self, page: NotebookPage):
+        return resolve_page_config(page)
 
 
 class SaveNotebookPageSerializer(serializers.Serializer):
     heading = serializers.CharField(required=False, allow_blank=True, max_length=255)
     subheading = serializers.CharField(required=False, allow_blank=True, max_length=255)
     content = serializers.CharField(required=False, allow_blank=True)
-    images = NotebookPageImageWriteSerializer(many=True, required=False)
+    config = PageConfigWriteSerializer(required=False)
 
 
 class NotebookPageWindowSerializer(serializers.Serializer):

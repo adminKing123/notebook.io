@@ -8,13 +8,14 @@ from notebooks.constants import DEFAULT_PAGE_WINDOW_SIZE
 from notebooks.models import Notebook
 from notebooks.serializers import (
     CreateNotebookSerializer,
-    NotebookPageImageSerializer,
+    ImageSerializer,
     NotebookPageSerializer,
     NotebookPageWindowSerializer,
     NotebookSerializer,
     SaveNotebookPageSerializer,
 )
 from notebooks.services import NotebookService, NotebookServiceError
+from notebooks.services.image_service import ImageService, ImageServiceError
 from notebooks.services.page_service import PageService, PageServiceError
 
 
@@ -178,6 +179,7 @@ class NotebookPageImageUploadView(APIView):
 
     def post(self, request, notebook_id, page_id):
         page_service = PageService()
+        image_service = ImageService()
         image_file = request.FILES.get('image')
 
         if image_file is None:
@@ -192,11 +194,16 @@ class NotebookPageImageUploadView(APIView):
                 page_id=page_id,
                 user=request.user,
             )
-            image = page_service.upload_page_image(page=page, image_file=image_file)
-        except PageServiceError as error:
+            image = image_service.upload_image(
+                owner=request.user,
+                image_file=image_file,
+                namespace=f'notebooks/{page.notebook_id}/pages/{page.id}',
+            )
+            page.notebook.save(update_fields=['updated_at'])
+        except (PageServiceError, ImageServiceError) as error:
             return _error_response(error)
 
         return Response(
-            NotebookPageImageSerializer(image).data,
+            ImageSerializer(image).data,
             status=status.HTTP_201_CREATED,
         )

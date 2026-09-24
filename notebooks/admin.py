@@ -1,11 +1,6 @@
 from django.contrib import admin
 
-from notebooks.models import Notebook, NotebookPage, NotebookPageImage
-
-
-class NotebookPageImageInline(admin.TabularInline):
-    model = NotebookPageImage
-    extra = 0
+from notebooks.models import Image, Notebook, NotebookPage
 
 
 class NotebookPageInline(admin.TabularInline):
@@ -29,4 +24,11 @@ class NotebookPageAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('heading', 'notebook__title')
     readonly_fields = ('id', 'created_at', 'updated_at')
-    inlines = [NotebookPageImageInline]
+
+
+@admin.register(Image)
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ('file_name', 'owner', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('file_name', 'owner__email', 'owner__full_name')
+    readonly_fields = ('id', 'created_at', 'updated_at')
