@@ -74,6 +74,36 @@
   outline-offset: 1px;
 }
 
+.notebook-page__image-remove {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #dc2626;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+  touch-action: manipulation;
+  pointer-events: auto;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.notebook-page__image-remove:hover {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  transform: scale(1.05);
+}
+
 .notebook-page__image-handle {
   position: absolute;
   z-index: 2;

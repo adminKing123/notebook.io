@@ -99,14 +99,18 @@ export default function Notebook({
     [currentPageIndex, onUpdateImage],
   );
 
-  const deleteSelectedImage = useCallback(() => {
-    if (!selectedImageId) {
-      return;
-    }
+  const deleteImage = useCallback(
+    (imageId) => {
+      const idToDelete = imageId ?? selectedImageId;
+      if (!idToDelete) {
+        return;
+      }
 
-    onDeleteImage?.(currentPageIndex, selectedImageId);
-    setSelectedImageId(null);
-  }, [currentPageIndex, onDeleteImage, selectedImageId]);
+      onDeleteImage?.(currentPageIndex, idToDelete);
+      setSelectedImageId(null);
+    },
+    [currentPageIndex, onDeleteImage, selectedImageId],
+  );
 
   const removePage = useCallback(() => {
     removePageBase({
@@ -116,9 +120,6 @@ export default function Notebook({
   }, [removePageBase]);
 
   const currentPageImages = pages[currentPageIndex]?.images ?? [];
-  const canDeleteSelectedImage = currentPageImages.some(
-    (image) => image.id === selectedImageId,
-  );
 
   useEffect(() => {
     const hasSelectedImage = currentPageImages.some((image) => image.id === selectedImageId);
@@ -135,13 +136,13 @@ export default function Notebook({
         !(event.target instanceof HTMLInputElement)
       ) {
         event.preventDefault();
-        deleteSelectedImage();
+        deleteImage();
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [deleteSelectedImage, selectedImageId]);
+  }, [deleteImage, selectedImageId]);
 
   return (
     <div className="notebook">
@@ -165,6 +166,7 @@ export default function Notebook({
           selectedImageId={selectedImageId}
           onSelectImage={setSelectedImageId}
           onUpdateImage={updatePageImage}
+          onDeleteImage={deleteImage}
           onImportImage={importImage}
           onContentChange={onContentChange}
         />
@@ -183,11 +185,9 @@ export default function Notebook({
         onRemovePage={removePage}
         onImportImage={importImage}
         onImportExistingImages={importExistingImages}
-        onDeleteSelectedImage={deleteSelectedImage}
         canRemovePage={totalPages > 1}
         canZoomIn={canZoomIn}
         canZoomOut={canZoomOut}
-        canDeleteSelectedImage={canDeleteSelectedImage}
       />
     </div>
   );

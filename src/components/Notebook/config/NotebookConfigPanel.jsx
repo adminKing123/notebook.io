@@ -17,11 +17,9 @@ export default function NotebookConfigPanel({
   onRemovePage,
   onImportImage,
   onImportExistingImages,
-  onDeleteSelectedImage,
   canRemovePage,
   canZoomIn,
   canZoomOut,
-  canDeleteSelectedImage,
 }) {
   return (
     <div className="notebook__config-panel">
@@ -48,8 +46,6 @@ export default function NotebookConfigPanel({
       <NotebookImageControls
         onImportImage={onImportImage}
         onImportExistingImages={onImportExistingImages}
-        onDeleteSelectedImage={onDeleteSelectedImage}
-        canDeleteSelectedImage={canDeleteSelectedImage}
       />
 
       <ConfigDivider />

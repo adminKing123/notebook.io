@@ -12,6 +12,7 @@ export default function NotebookPageSheet({
   selectedImageId,
   onSelectImage,
   onUpdateImage,
+  onDeleteImage,
   onImportImage,
 }) {
   return (
@@ -36,6 +37,7 @@ export default function NotebookPageSheet({
           selectedImageId={selectedImageId}
           onSelectImage={onSelectImage}
           onUpdateImage={onUpdateImage}
+          onDeleteImage={onDeleteImage}
           containerRef={sheetRef}
         />
       )}

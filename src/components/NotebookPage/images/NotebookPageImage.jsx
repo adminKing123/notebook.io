@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { MdClose } from 'react-icons/md';
 import Spinner from '../../ui/Spinner';
 import { RESIZE_HANDLES } from './constants';
 import { useImageTransform } from './hooks/useImageTransform';
@@ -10,6 +11,7 @@ export default function NotebookPageImage({
   containerRef,
   onSelect,
   onChange,
+  onDelete,
 }) {
   const { setImageRef, isLoaded, markLoaded } = useImageLoadState(image.src);
 
@@ -69,6 +71,24 @@ export default function NotebookPageImage({
         <span className="notebook-page__image-uploading" aria-hidden="true">
           <Spinner size="sm" label="Uploading image" />
         </span>
+      )}
+
+      {isSelected && !image.uploading && onDelete && (
+        <button
+          type="button"
+          className="notebook-page__image-remove"
+          aria-label="Remove image"
+          title="Remove image"
+          onPointerDown={(event) => {
+            event.stopPropagation();
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete(image.id);
+          }}
+        >
+          <MdClose />
+        </button>
       )}
 
       {isSelected &&

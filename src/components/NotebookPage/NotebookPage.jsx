@@ -18,6 +18,7 @@ import './images/NotebookPageImages.css';
  * @param {string|null} [props.selectedImageId]
  * @param {(id: string|null) => void} [props.onSelectImage]
  * @param {(id: string, patch: object) => void} [props.onUpdateImage]
+ * @param {(id: string) => void} [props.onDeleteImage]
  * @param {(file: File) => void} [props.onImportImage]
  * @param {(content: object) => void} [props.onContentChange]
  */
@@ -30,6 +31,7 @@ export default function NotebookPage({
   selectedImageId = null,
   onSelectImage,
   onUpdateImage,
+  onDeleteImage,
   onImportImage,
   onContentChange,
 }) {
@@ -75,6 +77,7 @@ export default function NotebookPage({
         selectedImageId={selectedImageId}
         onSelectImage={onSelectImage}
         onUpdateImage={onUpdateImage}
+        onDeleteImage={onDeleteImage}
         onImportImage={onImportImage}
       />
     </div>

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { MdHighlightOff, MdImage } from 'react-icons/md';
+import { MdImage } from 'react-icons/md';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +14,6 @@ const MAX_IMPORT_COUNT = 5;
 export default function NotebookImageControls({
   onImportImage,
   onImportExistingImages,
-  onDeleteSelectedImage,
-  canDeleteSelectedImage,
 }) {
   const imageInputRef = useRef(null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -82,16 +80,6 @@ export default function NotebookImageControls({
         onImport={(images) => onImportExistingImages?.(images)}
         maxSelection={MAX_IMPORT_COUNT}
       />
-
-      <button
-        type="button"
-        className="notebook__config-button notebook__config-button--danger"
-        title="Delete selected image"
-        onClick={onDeleteSelectedImage}
-        disabled={!canDeleteSelectedImage}
-      >
-        <MdHighlightOff />
-      </button>
     </>
   );
 }

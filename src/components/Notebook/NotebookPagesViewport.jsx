@@ -9,6 +9,7 @@ export default function NotebookPagesViewport({
   selectedImageId,
   onSelectImage,
   onUpdateImage,
+  onDeleteImage,
   onImportImage,
   onContentChange,
 }) {
@@ -36,6 +37,7 @@ export default function NotebookPagesViewport({
               selectedImageId={index === currentPageIndex ? selectedImageId : null}
               onSelectImage={index === currentPageIndex ? onSelectImage : undefined}
               onUpdateImage={index === currentPageIndex ? onUpdateImage : undefined}
+              onDeleteImage={index === currentPageIndex ? onDeleteImage : undefined}
               onImportImage={index === currentPageIndex ? onImportImage : undefined}
               onContentChange={
                 onContentChange ? (content) => onContentChange(index, content) : undefined

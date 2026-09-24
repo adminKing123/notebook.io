@@ -5,6 +5,7 @@ export default function NotebookPageImages({
   selectedImageId,
   onSelectImage,
   onUpdateImage,
+  onDeleteImage,
   containerRef,
 }) {
   if (images.length === 0) {
@@ -28,6 +29,7 @@ export default function NotebookPageImages({
           containerRef={containerRef}
           onSelect={onSelectImage}
           onChange={onUpdateImage}
+          onDelete={onDeleteImage}
         />
       ))}
     </div>
