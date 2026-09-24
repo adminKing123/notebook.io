@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { fetchUserImages } from '../../../api/notebookImages';
+import { fetchUserImages } from '../../../api/notebookPages';
 import {
   Dialog,
   DialogContent,

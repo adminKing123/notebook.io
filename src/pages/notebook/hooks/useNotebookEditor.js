@@ -3,20 +3,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   createNotebookPage,
   deleteNotebookPage,
-  fetchNotebookDetail,
   fetchPageWindow,
   saveNotebookPage,
   uploadNotebookPageImage,
 } from '../../../api/notebookPages';
 import {
-  createDefaultImageLayout,
-  createStaggeredImageLayout,
-} from '../../../components/NotebookPage/images/utils/imageLayout';
-import {
   loadImageFromFile,
   revokeImageSrc,
 } from '../../../components/NotebookPage/images/utils/loadImageFromFile';
-import { createPageId } from '../../../components/Notebook/utils/normalizePages';
+import { createId } from '../../../utils/createId';
 import { AUTOSAVE_DEBOUNCE_MS, PAGE_WINDOW_SIZE } from '../constants';
 import { contentLinesToText } from '../utils/pageContent';
 import {
@@ -24,9 +19,13 @@ import {
   mergePageWindow,
   serializePageForSave,
 } from '../utils/mapNotebookPage';
+import {
+  buildLibraryPlacements,
+  buildUploadedPlacement,
+  buildUploadingPlacement,
+} from '../utils/pageImages';
 
 export function useNotebookEditor(notebookId) {
-  const [notebookMeta, setNotebookMeta] = useState(null);
   const [pages, setPages] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,16 +99,15 @@ export function useNotebookEditor(notebookId) {
       setError('');
 
       try {
-        const [meta, windowResponse] = await Promise.all([
-          fetchNotebookDetail(notebookId),
-          fetchPageWindow(notebookId, { center: 1, window: PAGE_WINDOW_SIZE }),
-        ]);
+        const windowResponse = await fetchPageWindow(notebookId, {
+          center: 1,
+          window: PAGE_WINDOW_SIZE,
+        });
 
         if (!isMounted) {
           return;
         }
 
-        setNotebookMeta(meta);
         setTotalPages(windowResponse.total_pages);
         setPages(mergePageWindow([], windowResponse));
       } catch (requestError) {
@@ -153,6 +151,22 @@ export function useNotebookEditor(notebookId) {
     [debouncedSave],
   );
 
+  const commitPageUpdate = useCallback(
+    (pageIndex, updatedPage, { save = true } = {}) => {
+      pagesRef.current = pagesRef.current.map((page, index) =>
+        index === pageIndex ? updatedPage : page,
+      );
+      setPages(pagesRef.current);
+
+      if (save) {
+        scheduleSave(updatedPage);
+      }
+
+      return updatedPage;
+    },
+    [scheduleSave],
+  );
+
   const handleContentChange = useCallback(
     (pageIndex, content) => {
       const currentPage = pagesRef.current[pageIndex];
@@ -160,20 +174,14 @@ export function useNotebookEditor(notebookId) {
         return;
       }
 
-      const updatedPage = {
+      commitPageUpdate(pageIndex, {
         ...currentPage,
         title: content.title,
         subtitle: content.subtitle,
         content: contentLinesToText(content.content),
-      };
-
-      pagesRef.current = pagesRef.current.map((page, index) =>
-        index === pageIndex ? updatedPage : page,
-      );
-      setPages(pagesRef.current);
-      scheduleSave(updatedPage);
+      });
     },
-    [scheduleSave],
+    [commitPageUpdate],
   );
 
   const handleUpdateImage = useCallback(
@@ -183,20 +191,14 @@ export function useNotebookEditor(notebookId) {
         return;
       }
 
-      const updatedPage = {
+      commitPageUpdate(pageIndex, {
         ...currentPage,
         images: currentPage.images.map((image) =>
           image.id === imageId ? { ...image, ...patch } : image,
         ),
-      };
-
-      pagesRef.current = pagesRef.current.map((page, index) =>
-        index === pageIndex ? updatedPage : page,
-      );
-      setPages(pagesRef.current);
-      scheduleSave(updatedPage);
+      });
     },
-    [scheduleSave],
+    [commitPageUpdate],
   );
 
   const handleImportImage = useCallback(
@@ -208,8 +210,7 @@ export function useNotebookEditor(notebookId) {
 
       try {
         const { src, aspectRatio } = await loadImageFromFile(file);
-        const layout = createDefaultImageLayout(aspectRatio);
-        const tempId = createPageId();
+        const placementId = createId();
 
         setPages((previousPages) =>
           previousPages.map((currentPage, index) =>
@@ -218,7 +219,7 @@ export function useNotebookEditor(notebookId) {
                   ...currentPage,
                   images: [
                     ...currentPage.images,
-                    { id: tempId, imageId: null, src, ...layout, uploading: true },
+                    buildUploadingPlacement({ placementId, src, aspectRatio }),
                   ],
                 }
               : currentPage,
@@ -228,31 +229,28 @@ export function useNotebookEditor(notebookId) {
         const uploadedImage = await uploadNotebookPageImage(notebookId, page.id, file);
         revokeImageSrc(src);
 
-        const pageWithUploadedImage = {
-          ...pagesRef.current[pageIndex],
-          images: pagesRef.current[pageIndex].images
-            .filter((image) => image.id !== tempId)
-            .concat({
-              id: tempId,
-              imageId: uploadedImage.id,
-              src: uploadedImage.url,
-              ...layout,
-            }),
-        };
-
-        pagesRef.current = pagesRef.current.map((currentPage, index) =>
-          index === pageIndex ? pageWithUploadedImage : currentPage,
+        const currentImages = pagesRef.current[pageIndex].images.filter(
+          (image) => image.id !== placementId,
         );
-        setPages(pagesRef.current);
+        const pageWithUploadedImage = commitPageUpdate(
+          pageIndex,
+          {
+            ...pagesRef.current[pageIndex],
+            images: [
+              ...currentImages,
+              buildUploadedPlacement({ placementId, uploadedImage, aspectRatio }),
+            ],
+          },
+          { save: true },
+        );
 
-        scheduleSave(pageWithUploadedImage);
-        return tempId;
+        return pageWithUploadedImage.images.at(-1)?.id ?? placementId;
       } catch (requestError) {
         setError(requestError.message);
         return null;
       }
     },
-    [notebookId, scheduleSave],
+    [commitPageUpdate, notebookId],
   );
 
   const handleImportExistingImages = useCallback(
@@ -263,36 +261,19 @@ export function useNotebookEditor(notebookId) {
       }
 
       try {
-        const newImages = apiImages.map((apiImage, index) => {
-          const aspectRatio = apiImage.aspect_ratio > 0 ? apiImage.aspect_ratio : 1;
-          const layout = createStaggeredImageLayout(aspectRatio, index);
-
-          return {
-            id: createPageId(),
-            imageId: apiImage.id,
-            src: apiImage.url,
-            ...layout,
-          };
-        });
-
-        const updatedPage = {
+        const newImages = buildLibraryPlacements(apiImages);
+        const updatedPage = commitPageUpdate(pageIndex, {
           ...page,
           images: [...page.images, ...newImages],
-        };
+        });
 
-        pagesRef.current = pagesRef.current.map((currentPage, index) =>
-          index === pageIndex ? updatedPage : currentPage,
-        );
-        setPages(pagesRef.current);
-        scheduleSave(updatedPage);
-
-        return newImages[newImages.length - 1]?.id ?? null;
+        return newImages.at(-1)?.id ?? null;
       } catch (requestError) {
         setError(requestError.message);
         return null;
       }
     },
-    [scheduleSave],
+    [commitPageUpdate],
   );
 
   const handleDeleteImage = useCallback(
@@ -307,18 +288,12 @@ export function useNotebookEditor(notebookId) {
         revokeImageSrc(removedImage.src);
       }
 
-      const updatedPage = {
+      commitPageUpdate(pageIndex, {
         ...currentPage,
         images: currentPage.images.filter((image) => image.id !== imageId),
-      };
-
-      pagesRef.current = pagesRef.current.map((page, index) =>
-        index === pageIndex ? updatedPage : page,
-      );
-      setPages(pagesRef.current);
-      scheduleSave(updatedPage);
+      });
     },
-    [scheduleSave],
+    [commitPageUpdate],
   );
 
   const handleAddPage = useCallback(async () => {
@@ -363,7 +338,6 @@ export function useNotebookEditor(notebookId) {
   );
 
   return {
-    notebookMeta,
     pages,
     setPages,
     totalPages,

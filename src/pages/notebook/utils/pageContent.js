@@ -1,4 +1,4 @@
-export function parseApiContent(content) {
+function contentToText(content) {
   if (typeof content === 'string') {
     return content;
   }
@@ -10,14 +10,10 @@ export function parseApiContent(content) {
   return '';
 }
 
+export function parseApiContent(content) {
+  return contentToText(content);
+}
+
 export function contentLinesToText(content) {
-  if (typeof content === 'string') {
-    return content;
-  }
-
-  if (Array.isArray(content)) {
-    return content.join('\n');
-  }
-
-  return '';
+  return contentToText(content);
 }

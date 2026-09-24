@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPageId, normalizePages } from '../utils/normalizePages';
+import { createId } from '../../../utils/createId';
+import { normalizePages } from '../utils/normalizePages';
 import { useNotebookPageTransition } from './useNotebookPageTransition';
 
 export function useNotebookPages(initialPages, options = {}) {
@@ -68,7 +69,7 @@ export function useNotebookPages(initialPages, options = {}) {
     }
 
     setPendingPageIndex(totalPages);
-    setPages((previousPages) => [...previousPages, { id: createPageId() }]);
+    setPages((previousPages) => [...previousPages, { id: createId() }]);
   }, [isAnimatingRef, onAddPageRequest, setPages, totalPages]);
 
   const removePage = useCallback(

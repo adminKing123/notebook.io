@@ -7,9 +7,8 @@ import {
   DropdownMenuTrigger,
 } from '../../ui/DropdownMenu';
 import UploadedImagesPickerDialog from './UploadedImagesPickerDialog';
+import { MAX_PAGE_IMAGE_IMPORT } from '../../../pages/notebook/constants';
 import './notebook-image-controls.css';
-
-const MAX_IMPORT_COUNT = 5;
 
 export default function NotebookImageControls({
   onImportImage,
@@ -19,7 +18,7 @@ export default function NotebookImageControls({
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const handleImageInputChange = (event) => {
-    const files = Array.from(event.target.files ?? []).slice(0, MAX_IMPORT_COUNT);
+    const files = Array.from(event.target.files ?? []).slice(0, MAX_PAGE_IMAGE_IMPORT);
 
     files.forEach((file) => {
       if (file.type.startsWith('image/')) {
@@ -78,7 +77,7 @@ export default function NotebookImageControls({
         open={isPickerOpen}
         onOpenChange={setIsPickerOpen}
         onImport={(images) => onImportExistingImages?.(images)}
-        maxSelection={MAX_IMPORT_COUNT}
+        maxSelection={MAX_PAGE_IMAGE_IMPORT}
       />
     </>
   );

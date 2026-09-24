@@ -2,13 +2,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { MdClose } from 'react-icons/md';
 
 export const Dialog = DialogPrimitive.Root;
-export const DialogTrigger = DialogPrimitive.Trigger;
 export const DialogClose = DialogPrimitive.Close;
-export const DialogPortal = DialogPrimitive.Portal;
-
-export function DialogOverlay({ className = '', ...props }) {
-  return <DialogPrimitive.Overlay className={className} {...props} />;
-}
 
 export function DialogContent({
   className = '',
@@ -17,8 +11,8 @@ export function DialogContent({
   ...props
 }) {
   return (
-    <DialogPortal>
-      <DialogOverlay className="app-dialog__overlay" />
+    <DialogPrimitive.Portal>
+      <DialogPrimitive.Overlay className="app-dialog__overlay" />
       <DialogPrimitive.Content className={className} {...props}>
         {children}
         {showCloseButton && (
@@ -27,7 +21,7 @@ export function DialogContent({
           </DialogClose>
         )}
       </DialogPrimitive.Content>
-    </DialogPortal>
+    </DialogPrimitive.Portal>
   );
 }
 

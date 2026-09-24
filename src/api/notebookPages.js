@@ -1,7 +1,12 @@
 import { apiRequest } from './client';
 
-export async function fetchNotebookDetail(notebookId) {
-  return apiRequest(`/notebooks/${notebookId}/`);
+export async function fetchUserImages({ page = 1, pageSize = 24 } = {}) {
+  const params = new URLSearchParams({
+    page: String(page),
+    page_size: String(pageSize),
+  });
+
+  return apiRequest(`/notebooks/images/?${params.toString()}`);
 }
 
 export async function fetchPageWindow(notebookId, { center = 1, window = 5 } = {}) {
