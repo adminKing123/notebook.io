@@ -17,7 +17,8 @@ import { createPageId } from '../../../components/Notebook/utils/normalizePages'
 import { AUTOSAVE_DEBOUNCE_MS, PAGE_WINDOW_SIZE } from '../constants';
 import { contentLinesToText } from '../utils/pageContent';
 import {
-  mapApiPageImage,
+  mapApiPage,
+  mapEmbeddedImage,
   mergePageWindow,
   serializePageForSave,
 } from '../utils/mapNotebookPage';
@@ -230,7 +231,7 @@ export function useNotebookEditor(notebookId) {
           images: pagesRef.current[pageIndex].images
             .filter((image) => image.id !== tempId)
             .concat({
-              ...mapApiPageImage(uploadedImage),
+              ...mapEmbeddedImage(uploadedImage),
               ...layout,
             }),
         };
@@ -280,20 +281,7 @@ export function useNotebookEditor(notebookId) {
     try {
       const createdPage = await createNotebookPage(notebookId);
       setTotalPages(createdPage.page_number);
-      setPages((previousPages) => [
-        ...previousPages,
-        {
-          id: createdPage.id,
-          pageNumber: createdPage.page_number,
-          title: createdPage.heading ?? '',
-          subtitle: createdPage.subheading ?? '',
-          content: createdPage.content ?? '',
-          images: Array.isArray(createdPage.images)
-            ? createdPage.images.map(mapApiPageImage)
-            : [],
-          loading: false,
-        },
-      ]);
+      setPages((previousPages) => [...previousPages, mapApiPage(createdPage)]);
 
       return createdPage.page_number;
     } catch (requestError) {

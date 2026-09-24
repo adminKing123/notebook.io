@@ -1,14 +1,19 @@
 import { contentLinesToText, parseApiContent } from './pageContent';
 
-export function mapApiPageImage(image) {
+export function mapEmbeddedImage(image) {
   return {
-    id: image.id,
+    id: image.image_id ?? image.id,
     src: image.url,
     x: image.x,
     y: image.y,
     width: image.width,
     aspectRatio: image.aspect_ratio,
   };
+}
+
+export function mapEmbeddedImagesFromConfig(config) {
+  const embeddedImages = config?.embedded_images;
+  return Array.isArray(embeddedImages) ? embeddedImages.map(mapEmbeddedImage) : [];
 }
 
 export function mapApiPage(page) {
@@ -18,7 +23,7 @@ export function mapApiPage(page) {
     title: page.heading ?? '',
     subtitle: page.subheading ?? '',
     content: parseApiContent(page.content),
-    images: Array.isArray(page.images) ? page.images.map(mapApiPageImage) : [],
+    images: mapEmbeddedImagesFromConfig(page.config),
     loading: false,
   };
 }
@@ -62,13 +67,14 @@ export function serializePageForSave(page) {
     heading: page.title ?? '',
     subheading: page.subtitle ?? '',
     content: contentLinesToText(page.content),
-    images: (page.images ?? []).map((image) => ({
-      id: image.id,
-      ...(image.src && !image.src.startsWith('blob:') ? { url: image.src } : {}),
-      x: image.x,
-      y: image.y,
-      width: image.width,
-      aspect_ratio: image.aspectRatio,
-    })),
+    config: {
+      embedded_images: (page.images ?? []).map((image) => ({
+        image_id: image.id,
+        x: image.x,
+        y: image.y,
+        width: image.width,
+        aspect_ratio: image.aspectRatio,
+      })),
+    },
   };
 }
